@@ -15,6 +15,7 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
   - carte HC05 HC06 : https://arduino-france.site/bluetooth-hc-05/
   - fonctionnement en maitre/esclave : https://wikilab.myhumankit.org/index.php?title=Ressources:Communication_Bluetooth_HC_05
   - datasheet : https://components101.com/wireless/hc-05-bluetooth-module
+  - the basis of bluetooth : https://www.opensourceforu.com/2015/06/linux-without-wires-the-basics-of-bluetooth/
 - affichage possible sur :
   - autre arduino
   - nokia 8110
