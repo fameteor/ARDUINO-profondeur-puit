@@ -20,6 +20,8 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
   - nokia 8110
     - KAIos bluetooth API : https://developer.kaiostech.com/docs/api/web-apis/bluetooth/bluetooth/
   - android
+  - PC :
+    https://www.baeldung.com/linux/bluetooth-via-terminal
 
 ## Câblage
   - capteur de profondeur : A2
