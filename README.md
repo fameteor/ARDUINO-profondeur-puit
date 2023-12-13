@@ -4,7 +4,8 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
 ## Matériel nécessaire
 - arduino avec carte mémoire pour enregistrer une mesure par heure :
   - tutorial et liste SD cards : https://docs.arduino.cc/learn/programming/sd-guide
-- affichage pour voir les données
+- affichage pour voir les données :
+  - display + clavier 2x16 : https://whadda.com/fr/produit/module-lcd-et-clavier-pour-arduino-lcd1602-wpsh203/
 - capteur de profondeur (pas de nécessité de capteur de pression athmosphérique : la différence est mesurée) :
   - https://wiki.dfrobot.com/Throw-in_Type_Liquid_Level_Transmitter_SKU_KIT0139
   - https://www.gotronic.fr/art-capteur-de-pression-etanche-gravity-kit0139-32275.htm#complte_desc
