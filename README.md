@@ -8,7 +8,8 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
   - https://wiki.dfrobot.com/Throw-in_Type_Liquid_Level_Transmitter_SKU_KIT0139
   - https://www.gotronic.fr/art-capteur-de-pression-etanche-gravity-kit0139-32275.htm#complte_desc
 - capteur de température
-- carte bluetooth
+- carte bluetooth : HC05 est maitre/esclave, HC06 est seulement esclave :
+  - carte HC05 HC06 : https://arduino-france.site/bluetooth-hc-05/
 - affichage possible sur :
   - autre arduino
   - nokia 8110
