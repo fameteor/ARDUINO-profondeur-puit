@@ -53,3 +53,5 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
   - afficheur :
   - horloge
   - carte SD
+  
+##### Problème : UNO a un ADC de 10 bits seulement => précision de 0,48 cm. Pour des convertisseurs 12 bits : The Zero, Due, MKR family and Nano 33 (BLE and IoT) boards have 12-bit ADC capabilities that can be accessed by changing the resolution to 12.
