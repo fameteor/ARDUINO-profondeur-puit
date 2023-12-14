@@ -27,23 +27,23 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
 ## Versions
 
 ### V00
-#### partie CAVE
-##### logiciel CAVE_01
-Il effectue les tâches suivantes
-- mesure toute les minutes de la profondeur
-- mémoire des mesures : 1 semaine, 24h, 12h, 6h, 3h, 1h, 30mn,
-- calcul des variations : 1 semaine, 24h, 12h, 6h, 3h, 1h, 30mn.
-- affichage de LEDS :
-  - vert : pas d'augmentation de la hauteur de la nappe,
-  - orange : risque de débordement sous 1 semaine,
-  - rouge ; risque de débordement sous 24h?
-- envoie des données en Bluetooth
-- impression des données sur la console série
-##### câblage
-- capteur de profondeur : A2
-- bluetooth :
-- LEDs : 
-#### partie AFFICHAGE
+  #### partie CAVE
+    ##### logiciel CAVE_01
+    Il effectue les tâches suivantes
+    - mesure toute les minutes de la profondeur
+    - mémoire des mesures : 1 semaine, 24h, 12h, 6h, 3h, 1h, 30mn,
+    - calcul des variations : 1 semaine, 24h, 12h, 6h, 3h, 1h, 30mn.
+    - affichage de LEDS :
+      - vert : pas d'augmentation de la hauteur de la nappe,
+      - orange : risque de débordement sous 1 semaine,
+      - rouge ; risque de débordement sous 24h?
+    - envoie des données en Bluetooth
+    - impression des données sur la console série
+    ##### câblage
+    - capteur de profondeur : A2
+    - bluetooth :
+    - LEDs : 
+  #### partie AFFICHAGE
 ##### logiciel CAVE_01
 ##### câblage
 
