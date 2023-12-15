@@ -80,10 +80,15 @@ Cf : `http://www.userk.co.uk/arduino-bluetooth-linux/`
 ### Installation
 Avec UBUNTU, la stack de gestion Bluetooth est déjà installée `bluez`. Il reste à installer l'émulateur de terminal série `minicom` : 
 - `apt update`
-- `sudo apt http://www.userk.co.uk/arduino-bluetooth-linux/`
+- `sudo apt install minicom`
 
 ### Utilisation
 - faire la connexion
 - configurer le terminal
 - lancer le terminal avec la bonne config : `sudo minicom bluetooth`
 
+## Connexion avec un Nokia 8118 en Bluetooth
+
+## Connexion à un Android en Bluetooth
+
+## Connexion à un autre Arduino avec afficheur en Bluetooth

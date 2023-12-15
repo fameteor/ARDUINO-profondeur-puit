@@ -18,7 +18,7 @@
 #define ANALOG_PIN A2
 
 // Measure interval ----------------------------------------
-#define MEASURE_INTERVAL 5000 // One mesure every minute
+#define MEASURE_INTERVAL 1000 // One mesure every minute
 // Calculus ------------------------------------------------
 #define RANGE 5000 // Depth measuring range 5000mm (for water)
 #define VREF 5000 // ADC's reference voltage on your Arduino,typical value:5000mV
@@ -32,8 +32,17 @@ float depth;
 float depthLast30mn, deltaLast30mn;
 float depthLast1h, deltaLast1h;
 float depthLast3h, deltaLast3h;
+float depthLast6h, deltaLast6h;
+float depthLast12h, deltaLast12h;
+float depthLast1j, deltaLast1j;
+float depthLast7j, deltaLast7j;
+float depthLast14j, deltaLast14j;
+float depthLast1m, deltaLast1m;
+float depthLast3m, deltaLast3m;
+float depthLast6m, deltaLast6m;
+float depthLast1a, deltaLast1a;
 unsigned long timepoint_measure;
-int measures_nb;
+unsigned long measures_nb;
 
 // Bluetooth serial link creation --------------------------
 SoftwareSerial BtSerial(10, 11); // RX | TX
@@ -69,6 +78,15 @@ void setup()
   depthLast30mn = depth;
   depthLast1h = depth;
   depthLast3h = depth;
+  depthLast6h = depth;
+  depthLast12h = depth;
+  depthLast1j = depth;
+  depthLast7j = depth;
+  depthLast14j = depth;
+  depthLast1m = depth;
+  depthLast3m = depth;
+  depthLast6m = depth;
+  depthLast1a = depth;
 }
   
 void loop()
@@ -115,8 +133,54 @@ void loop()
         // Serial.println("3 heures");
         deltaLast3h = depth - depthLast3h;
         depthLast3h = depth;
+      }
+      if (measures_nb % 360 == 0) {
+        // Serial.println("6 heures");
+        deltaLast6h = depth - depthLast6h;
+        depthLast6h = depth;
+      }
+      if (measures_nb % 720 == 0) {
+        // Serial.println("12 heures");
+        deltaLast12h = depth - depthLast12h;
+        depthLast12h = depth;
+      }  
+      if (measures_nb % 1440 == 0) {
+        // Serial.println("1 jour");
+        deltaLast1j = depth - depthLast1j;
+        depthLast1j = depth;
+      }  
+      if (measures_nb % 10080 == 0) {
+        // Serial.println("7 jours");
+        deltaLast7j = depth - depthLast7j;
+        depthLast7j = depth;
+      }
+      if (measures_nb % 20160 == 0) {
+        // Serial.println("14 jours");
+        deltaLast14j = depth - depthLast14j;
+        depthLast14j = depth;
+      }  
+      if (measures_nb % 43920 == 0) {
+        // Serial.println("1 mois") // 30,5 jours par mois ;
+        deltaLast1m = depth - depthLast1m;
+        depthLast1m = depth;
+      }
+      if (measures_nb % 131760 == 0) {
+        // Serial.println("3 mois") // 30,5 jours par mois ;
+        deltaLast3m = depth - depthLast3m;
+        depthLast3m = depth;
+      }
+      if (measures_nb % 263520 == 0) {
+        // Serial.println("6 mois") // 30,5 jours par mois;
+        deltaLast6m = depth - depthLast6m;
+        depthLast6m = depth;
+      }
+       if (measures_nb % 525600 == 0) {
+        // Serial.println("1 an") // 365 jours par an;
+        deltaLast1a = depth - depthLast1a;
+        depthLast1a = depth;
         measures_nb = 0;
-      }    
+      }  
+
       // Print deltas
       Serial.print("  delta 30mn :");
       Serial.print(deltaLast30mn);
@@ -127,7 +191,33 @@ void loop()
       Serial.print("  delta 3h :");
       Serial.print(deltaLast3h);
       Serial.println("cm");
-
+      Serial.print("  delta 6h :");
+      Serial.print(deltaLast6h);
+      Serial.println("cm");
+      Serial.print("  delta 12h :");
+      Serial.print(deltaLast12h);
+      Serial.println("cm");
+      Serial.print("  delta 1j :");
+      Serial.print(deltaLast1j);
+      Serial.println("cm");
+      Serial.print("  delta 7j :");
+      Serial.print(deltaLast7j);
+      Serial.println("cm");
+      Serial.print("  delta 14j :");
+      Serial.print(deltaLast14j);
+      Serial.println("cm");
+      Serial.print("  delta 1m :");
+      Serial.print(deltaLast1m);
+      Serial.println("cm");
+      Serial.print("  delta 3m :");
+      Serial.print(deltaLast3m);
+      Serial.println("cm");
+      Serial.print("  delta 6m :");
+      Serial.print(deltaLast6m);
+      Serial.println("cm");
+      Serial.print("  delta 1a :");
+      Serial.print(deltaLast1a);
+      Serial.println("cm");
     }
     // Envoi de la mesure en Bluetooth
     BtSerial.println(depth);
