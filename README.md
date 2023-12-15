@@ -54,4 +54,19 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
   - horloge
   - carte SD
   
-##### Problème : UNO a un ADC de 10 bits seulement => précision de 0,48 cm. Pour des convertisseurs 12 bits : The Zero, Due, MKR family and Nano 33 (BLE and IoT) boards have 12-bit ADC capabilities that can be accessed by changing the resolution to 12.
+#### Fonctionnement
+- démarrer avec le switch en mode configuration, toutes les leds (verte, orange et rouge) sont allumée, on peut alors rentrer les commandes suivantes :
+	- réinitialiser les paramètres par défaut : `AT+ORGL`
+	- effacer les appareils apairés : `AT+RMAAD`
+	- configurer le mot de passe : `AT+PSWD=9362`
+	- assigner le mode esclave : `AT+ROLE=0`
+	- modifier le nom : `AT+NAME=CAVE_FB`
+	- récupérer et noter l'adresse du module: `AT+ADDR?`
+	
+- arrêter et redémarrer avec le switch en mode normal. Une mesure est effectuée toutes les secondes et affichée sur la console. Les deltas de 30mn, 1h, 3h, 6h, 1j, 7j, 14j, 1m, 3m, 6m, 1 an sont aussi affichés sur la console. Les LEDs ont alors un rôle d'alarme :
+	- LED verte : le niveau est stable ou baisse
+	- LED orange : risque de débordement sous 1 semaine
+	- LED rouge : risque de débordement sous 1 jour
+
+##### Problème
+UNO a un ADC de 10 bits seulement => précision de 0,48 cm. c'est suffisant. Mais Pour des convertisseurs 12 bits, on peut utiliser les arduino suivants : The Zero, Due, MKR family and Nano 33 (BLE and IoT) boards have 12-bit ADC capabilities that can be accessed by changing the resolution to 12.

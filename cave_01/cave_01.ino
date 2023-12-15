@@ -6,6 +6,7 @@
 
 // Câblage -------------------------------------------------
 // LEDs
+// LED_BUILTIN 13
 #define  greenLedPin 6
 #define  yellowLedPin 7
 #define  redLedPin 8
@@ -17,7 +18,7 @@
 #define ANALOG_PIN A2
 
 // Measure interval ----------------------------------------
-#define MEASURE_INTERVAL 1000 // One mesure every minute
+#define MEASURE_INTERVAL 5000 // One mesure every minute
 // Calculus ------------------------------------------------
 #define RANGE 5000 // Depth measuring range 5000mm (for water)
 #define VREF 5000 // ADC's reference voltage on your Arduino,typical value:5000mV
@@ -74,11 +75,15 @@ void loop()
 {
   if (keyPin == HIGH) {
     // Module in AT commands mode
+
+    // Set all the LEDS ON in AT MODE
+    digitalWrite(greenLedPin, HIGH);
+    digitalWrite(yellowLedPin, HIGH);
+    digitalWrite(redLedPin, HIGH);
     // Arduino serial monitor is crossed linked to HC-05 data
-    /*
+    // to send AT commands manually to HC-05 from the console
     if (BtSerial.available()) Serial.write(BtSerial.read());
     if (Serial.available())   BtSerial.write(Serial.read());
-    */
   }
   else {
     // Module in DATA mode" --------------------------
