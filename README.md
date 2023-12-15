@@ -22,7 +22,10 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
     - KAIos bluetooth API : https://developer.kaiostech.com/docs/api/web-apis/bluetooth/bluetooth/
   - android
   - PC :
-    https://www.baeldung.com/linux/bluetooth-via-terminal
+    - https://www.baeldung.com/linux/bluetooth-via-terminal
+    - send data via Bluetooth : http://www.userk.co.uk/arduino-bluetooth-linux/
+    - another solution : https://avilpage.com/2017/10/bluetooth-communication-between-ubuntu-android.html
+    
 
 ## Versions
 
@@ -70,3 +73,17 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
 
 ##### Problème
 UNO a un ADC de 10 bits seulement => précision de 0,48 cm. c'est suffisant. Mais Pour des convertisseurs 12 bits, on peut utiliser les arduino suivants : The Zero, Due, MKR family and Nano 33 (BLE and IoT) boards have 12-bit ADC capabilities that can be accessed by changing the resolution to 12.
+
+
+## Connexion avec un PC Ubuntu avec Bluetooth
+Cf : `http://www.userk.co.uk/arduino-bluetooth-linux/`
+### Installation
+Avec UBUNTU, la stack de gestion Bluetooth est déjà installée `bluez`. Il reste à installer l'émulateur de terminal série `minicom` : 
+- `apt update`
+- `sudo apt http://www.userk.co.uk/arduino-bluetooth-linux/`
+
+### Utilisation
+- faire la connexion
+- configurer le terminal
+- lancer le terminal avec la bonne config : `sudo minicom bluetooth`
+
