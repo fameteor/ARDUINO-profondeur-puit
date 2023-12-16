@@ -18,7 +18,7 @@
 #define ANALOG_PIN A2
 
 // Measure interval ----------------------------------------
-#define MEASURE_INTERVAL 1000 // One mesure every minute
+#define MEASURE_INTERVAL 10000 // One mesure every minute
 // Calculus ------------------------------------------------
 #define RANGE 5000 // Depth measuring range 5000mm (for water)
 #define VREF 5000 // ADC's reference voltage on your Arduino,typical value:5000mV
@@ -100,8 +100,14 @@ void loop()
     digitalWrite(redLedPin, HIGH);
     // Arduino serial monitor is crossed linked to HC-05 data
     // to send AT commands manually to HC-05 from the console
-    if (BtSerial.available()) Serial.write(BtSerial.read());
-    if (Serial.available())   BtSerial.write(Serial.read());
+    if (BtSerial.available()) {
+      Serial.write(BtSerial.read());
+      Serial.println(BtSerial.read());
+    }
+    if (Serial.available()) {
+      BtSerial.write(Serial.read());
+      Serial.println(Serial.read());
+    }
   }
   else {
     // Module in DATA mode" --------------------------

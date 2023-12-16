@@ -75,7 +75,7 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
 UNO a un ADC de 10 bits seulement => précision de 0,48 cm. c'est suffisant. Mais Pour des convertisseurs 12 bits, on peut utiliser les arduino suivants : The Zero, Due, MKR family and Nano 33 (BLE and IoT) boards have 12-bit ADC capabilities that can be accessed by changing the resolution to 12.
 
 
-## Connexion avec un PC Ubuntu avec Bluetooth
+## B1) Connexion avec un PC Ubuntu avec Bluetooth
 Cf : `http://www.userk.co.uk/arduino-bluetooth-linux/`
 ### Installation
 Avec UBUNTU, la stack de gestion Bluetooth est déjà installée `bluez`. Il reste à installer l'émulateur de terminal série `minicom` : 
@@ -87,8 +87,27 @@ Avec UBUNTU, la stack de gestion Bluetooth est déjà installée `bluez`. Il res
 - configurer le terminal
 - lancer le terminal avec la bonne config : `sudo minicom bluetooth`
 
-## Connexion avec un Nokia 8118 en Bluetooth
+## B2) Connexion avec un Nokia 8118 en Bluetooth
 
-## Connexion à un Android en Bluetooth
+## B3) Connexion à un Android en Bluetooth
+Il faut une application supportant le profile Bluetooth : `Serial Port Bluetooth Profile (SPP)` appelé aussi `RFCOMM`
+Application utilisables :
+- Serial Bluetooth Terminal : `https://play.google.com/store/apps/details?id=de.kai_morich.serial_bluetooth_terminal&hl=fr&gl=US`
+- Bluetooth SPP Manager : `https://play.google.com/store/apps/details?id=at.rtcmanager&hl=en_US`
+- BTerm SPP : `https://play.google.com/store/apps/details?id=kibo.bterm`
+- BlueSPP : `https://play.google.com/store/apps/details?id=com.shenyaocn.android.BlueSPP&hl=fr&gl=US`
 
-## Connexion à un autre Arduino avec afficheur en Bluetooth
+## B4) Connexion à un autre Arduino avec afficheur en Bluetooth
+Informations :
+- https://wiki.mozilla.org/B2G/Bluetooth
+
+
+## Annexes
+### Bluetooth information
+- pour obtenir les profiles Bluetooth d'un objet :
+	- sur Ubuntu : run `bluetoothctl`
+	- obtenir l'adresse du device voulu : `scan le`
+	- puis obtenir les infos du device : `info 20:39:56:28:1B:F7`
+  Each profile as a globally unique ID, the UUID. Profiles standardized by the Bluetooth Special Interests Group (SIG) have a 128bit-UUID in the form of 0000XXXX-0000-1000-8000-00805F9B34FB. 
+  
+Ce qui nous intéresse semble le `Serial Port Bluetooth Profile (SPP)`
