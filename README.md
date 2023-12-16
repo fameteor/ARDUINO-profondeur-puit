@@ -83,9 +83,12 @@ Avec UBUNTU, la stack de gestion Bluetooth est déjà installée `bluez`. Il res
 - `sudo apt install minicom`
 
 ### Utilisation
-- faire la connexion
-- configurer le terminal
+- utiliser `bluetoothctl`
+- `scan on`
+- `agent on`
+- `pair 98:D3:11:FD:23:2C` en fournissant éventuellement le PIB code
 - lancer le terminal avec la bonne config : `sudo minicom bluetooth`
+- pour supprimer avec bluetoothctl (si PIN code pas demandé) :  disconnect, untrust, and remove the device by bluetooth MAC address.
 
 ## B2) Connexion avec un Nokia 8118 en Bluetooth
 

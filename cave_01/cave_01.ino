@@ -7,26 +7,27 @@
 // Câblage -------------------------------------------------
 // LEDs
 // LED_BUILTIN 13
-#define  greenLedPin 6
-#define  yellowLedPin 7
-#define  redLedPin 8
+#define greenLedPin 6
+#define yellowLedPin 7
+#define redLedPin 8
 // Bluetooth
-#define  BtKeyPin 9 // to HC-05 key pin
-#define  BtRxPin 10 // to HC-05 RX pin
-#define  BtTxPin 11 // to HC-05 TX pin
+#define BtKeyPin 9  // to HC-05 key pin
+#define BtRxPin 10  // to HC-05 RX pin
+#define BtTxPin 11  // to HC-05 TX pin
 // Mesure
 #define ANALOG_PIN A2
 
 // Measure interval ----------------------------------------
-#define MEASURE_INTERVAL 10000 // One mesure every minute
+#define MEASURE_INTERVAL 10000  // One mesure every minute
 // Calculus ------------------------------------------------
-#define RANGE 5000 // Depth measuring range 5000mm (for water)
-#define VREF 5000 // ADC's reference voltage on your Arduino,typical value:5000mV
-#define CURRENT_INIT 4.00 // Current @ 0mm (uint: mA)
-#define DENSITY_WATER 1  // Pure water density normalized to 1
+#define RANGE 5000         // Depth measuring range 5000mm (for water)
+#define VREF 5000          // ADC's reference voltage on your Arduino,typical value:5000mV
+#define CURRENT_INIT 4.00  // Current @ 0mm (uint: mA)
+#define DENSITY_WATER 1    // Pure water density normalized to 1
 
 // Variables -----------------------------------------------
 int keyPin;
+bool isInATmode = false;
 int commandCode;
 float depth;
 float depthLast30mn, deltaLast30mn;
@@ -45,27 +46,25 @@ unsigned long timepoint_measure;
 unsigned long measures_nb;
 
 // Bluetooth serial link creation --------------------------
-SoftwareSerial BtSerial(10, 11); // RX | TX
-  
-void setup()
-{
-  pinMode (greenLedPin, OUTPUT);
-  pinMode (yellowLedPin, OUTPUT);
-  pinMode (redLedPin, OUTPUT);
+SoftwareSerial BtSerial(BtRxPin, BtTxPin);  // RX | TX
+
+void setup() {
+  pinMode(greenLedPin, OUTPUT);
+  pinMode(yellowLedPin, OUTPUT);
+  pinMode(redLedPin, OUTPUT);
   pinMode(BtKeyPin, INPUT);
-  pinMode (BtRxPin, INPUT);
-  pinMode (BtTxPin, OUTPUT);
+  // pinMode (BtRxPin, INPUT); // Inutile
+  // pinMode (BtTxPin, OUTPUT); // Inutile
 
   // Serial ports are configured to 38400 bps : HC-05 default speed in AT command mode
   Serial.begin(38400);
-  BtSerial.begin(38400);  
+  BtSerial.begin(38400);
   // We read the HC-05 mode : DATA or AT commands
-  keyPin = digitalRead (BtKeyPin);
-  
-  if (keyPin == HIGH) {
-    Serial.println("Module in AT commands mode, please enter AT command");
-  }
-  else {
+  keyPin = digitalRead(BtKeyPin);
+
+  if (isInATmode) {
+    Serial.println("Module in AT commands mode, please enter AT command (after chercking that terminal send both NL + CR)");
+  } else {
     Serial.println("Module in DATA mode");
   }
 
@@ -88,29 +87,20 @@ void setup()
   depthLast6m = depth;
   depthLast1a = depth;
 }
-  
-void loop()
-{
-  if (keyPin == HIGH) {
-    // Module in AT commands mode
 
-    // Set all the LEDS ON in AT MODE
-    digitalWrite(greenLedPin, HIGH);
-    digitalWrite(yellowLedPin, HIGH);
-    digitalWrite(redLedPin, HIGH);
+void loop() {
+  if (isInATmode) {
+    // Module in AT commands mode
     // Arduino serial monitor is crossed linked to HC-05 data
     // to send AT commands manually to HC-05 from the console
     if (BtSerial.available()) {
       Serial.write(BtSerial.read());
-      Serial.println(BtSerial.read());
     }
     if (Serial.available()) {
       BtSerial.write(Serial.read());
-      Serial.println(Serial.read());
     }
-  }
-  else {
-    // Module in DATA mode" --------------------------
+  } else {
+    // Module in DATA mode --------------------------
     // Mesure
     if (millis() - timepoint_measure > MEASURE_INTERVAL) {
       timepoint_measure = millis();
@@ -123,7 +113,7 @@ void loop()
       Serial.println("cm");
 
       // Initial measure for delta calculus;
-      
+
       // Deltas calculus
       if (measures_nb % 30 == 0) {
         // Serial.println("demi-heure");
@@ -149,12 +139,12 @@ void loop()
         // Serial.println("12 heures");
         deltaLast12h = depth - depthLast12h;
         depthLast12h = depth;
-      }  
+      }
       if (measures_nb % 1440 == 0) {
         // Serial.println("1 jour");
         deltaLast1j = depth - depthLast1j;
         depthLast1j = depth;
-      }  
+      }
       if (measures_nb % 10080 == 0) {
         // Serial.println("7 jours");
         deltaLast7j = depth - depthLast7j;
@@ -164,7 +154,7 @@ void loop()
         // Serial.println("14 jours");
         deltaLast14j = depth - depthLast14j;
         depthLast14j = depth;
-      }  
+      }
       if (measures_nb % 43920 == 0) {
         // Serial.println("1 mois") // 30,5 jours par mois ;
         deltaLast1m = depth - depthLast1m;
@@ -180,12 +170,12 @@ void loop()
         deltaLast6m = depth - depthLast6m;
         depthLast6m = depth;
       }
-       if (measures_nb % 525600 == 0) {
+      if (measures_nb % 525600 == 0) {
         // Serial.println("1 an") // 365 jours par an;
         deltaLast1a = depth - depthLast1a;
         depthLast1a = depth;
         measures_nb = 0;
-      }  
+      }
 
       // Print deltas
       Serial.print("  delta 30mn :");
@@ -227,10 +217,50 @@ void loop()
     }
     // Envoi de la mesure en Bluetooth
     BtSerial.println(depth);
+    BtSerial.print("  delta 30mn :");
+    BtSerial.print(deltaLast30mn);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 1h :");
+    BtSerial.print(deltaLast1h);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 3h :");
+    BtSerial.print(deltaLast3h);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 6h :");
+    BtSerial.print(deltaLast6h);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 12h :");
+    BtSerial.print(deltaLast12h);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 1j :");
+    BtSerial.print(deltaLast1j);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 7j :");
+    BtSerial.print(deltaLast7j);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 14j :");
+    BtSerial.print(deltaLast14j);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 1m :");
+    BtSerial.print(deltaLast1m);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 3m :");
+    BtSerial.print(deltaLast3m);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 6m :");
+    BtSerial.print(deltaLast6m);
+    BtSerial.println("cm");
+    BtSerial.print("  delta 1a :");
+    BtSerial.print(deltaLast1a);
+    BtSerial.println("cm");
+    // Réception d'action depuis le Bluetooth
 
-    // Réception d'action
- 
     if (BtSerial.available()) {
+      // Read the bluetooth command without CR LF
+      String bluetoothCommand = BtSerial.readString();
+      bluetoothCommand.trim();
+      Serial.print("bluetooth command received : ");
+      Serial.println(bluetoothCommand);
       /* 
       commandCode = BtSerial.read();
       Serial.print("commande recue : ");
@@ -243,17 +273,54 @@ void loop()
       if (commandCode == '3') {digitalWrite(10, LOW);}
       */
     }
-    
   }
-  
+  // Réception d'action depuis le terminal ---------------
+  // en mode AT ou DATA
+  if (Serial.available()) {
+    // Read the console command without CR LF
+    String consoleCommand = Serial.readString();
+    consoleCommand.trim();
+    Serial.print("console command received : ");
+    Serial.println(consoleCommand);
+    // If "AT" : go to AT COMMAND mode
+    if (consoleCommand == "AT") {
+      Serial.println("console command to go to AT COMMAND mode");
+      isInATmode = true;
+      // Set all the LEDS ON in AT MODE
+      digitalWrite(greenLedPin, HIGH);
+      digitalWrite(yellowLedPin, HIGH);
+      digitalWrite(redLedPin, HIGH);
+      Serial.println("Module in AT commands mode, please enter AT command (after chercking that terminal send both NL + CR)");
+    }
+    // If "EXIT" in AT COMMAND mode, return to DATA mode
+    if (consoleCommand == "EXIT") {
+      Serial.println("console command to go to DATA mode");
+      isInATmode = false;
+      // Set all the alarms LEDS
+      displayAlarmLeds();
+      Serial.println("Module in DATA mode");
+    }
+  }
 }
 
+// ---------------------------------------------------------
+// Fonction d'affichage des alarmes LED'
+//----------------------------------------------------------
+void displayAlarmLeds() {
+  digitalWrite(greenLedPin, LOW);
+  digitalWrite(yellowLedPin, LOW);
+  digitalWrite(redLedPin, LOW);
+}
+
+// ---------------------------------------------------------
+// Fonction de mesure de la profondeur en cm
+//----------------------------------------------------------
 float getDepth() {
   int16_t dataVoltage;
-  float dataCurrent, depthMesure; //mA for current
-  dataVoltage = analogRead(ANALOG_PIN)/ 1024.0 * VREF;
-  dataCurrent = dataVoltage / 120.0; //Sense Resistor:120ohm
-  depthMesure = (dataCurrent - CURRENT_INIT) * (RANGE/ DENSITY_WATER / 16.0 / 10); //Calculate depth from current readings in cm
+  float dataCurrent, depthMesure;  //mA for current
+  dataVoltage = analogRead(ANALOG_PIN) / 1024.0 * VREF;
+  dataCurrent = dataVoltage / 120.0;                                                 //Sense Resistor:120ohm
+  depthMesure = (dataCurrent - CURRENT_INIT) * (RANGE / DENSITY_WATER / 16.0 / 10);  //Calculate depth from current readings in cm
   //  if (depthMesure < 0) depthMesure = 0.0;
   return depthMesure;
 }
