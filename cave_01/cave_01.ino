@@ -3,6 +3,7 @@
 ***********************************************************/
 
 #include <SoftwareSerial.h>
+#include <DHT.h>
 
 // Câblage -------------------------------------------------
 // LEDs
@@ -14,11 +15,14 @@
 #define BtKeyPin 9  // to HC-05 key pin
 #define BtRxPin 10  // to HC-05 RX pin
 #define BtTxPin 11  // to HC-05 TX pin
-// Mesure
+// Depth mesurement
 #define ANALOG_PIN A2
+// Temperature and humidity measurement
+#define DHTpin 5
+#define DHTtype DHT11
 
 // Measure interval ----------------------------------------
-#define MEASURE_INTERVAL 10000  // One mesure every minute
+#define MEASURE_INTERVAL 60000  // One mesure every minute
 // Calculus ------------------------------------------------
 #define RANGE 5000         // Depth measuring range 5000mm (for water)
 #define VREF 5000          // ADC's reference voltage on your Arduino,typical value:5000mV
@@ -44,17 +48,22 @@ float depthLast6m, deltaLast6m;
 float depthLast1a, deltaLast1a;
 unsigned long timepoint_measure;
 unsigned long measures_nb;
+float humidity;
+float temperature;
 
 // Bluetooth serial link creation --------------------------
 SoftwareSerial BtSerial(BtRxPin, BtTxPin);  // RX | TX
+// DHT initialisation --------------------------------------
+DHT dht(DHTpin, DHTtype);
 
 void setup() {
   pinMode(greenLedPin, OUTPUT);
   pinMode(yellowLedPin, OUTPUT);
   pinMode(redLedPin, OUTPUT);
   pinMode(BtKeyPin, INPUT);
-  // pinMode (BtRxPin, INPUT); // Inutile
-  // pinMode (BtTxPin, OUTPUT); // Inutile
+
+  // DHC11 initialisation
+  dht.begin();
 
   // Serial ports are configured to 38400 bps : HC-05 default speed in AT command mode
   Serial.begin(38400);
@@ -62,13 +71,10 @@ void setup() {
   // We read the HC-05 mode : DATA or AT commands
   keyPin = digitalRead(BtKeyPin);
 
-  if (isInATmode) {
-    Serial.println("Module in AT commands mode, please enter AT command (after chercking that terminal send both NL + CR)");
-  } else {
-    Serial.println("Module in DATA mode");
-  }
+  // Set HC-05 mode
+  SetHC5Mode();
 
-  // Measure
+  // Measures
   pinMode(ANALOG_PIN, INPUT);
   timepoint_measure = millis();
   measures_nb = 0;
@@ -106,11 +112,10 @@ void loop() {
       timepoint_measure = millis();
       depth = getDepth();
       measures_nb += 1;
-      //Serial print results
-      Serial.print(measures_nb);
-      Serial.print("-depth:");
-      Serial.print(depth);
-      Serial.println("cm");
+
+      // DHT Measures
+      humidity = dht.readHumidity();
+      temperature = dht.readTemperature();
 
       // Initial measure for delta calculus;
 
@@ -176,102 +181,71 @@ void loop() {
         depthLast1a = depth;
         measures_nb = 0;
       }
-
+      //Serial print results
+      Serial.print(measures_nb);
+      Serial.println(" ---------------------------------------");
+      Serial.print("profondeur : ");
+      Serial.print(depth);
+      Serial.print("cm");
+      Serial.print(", température :");
+      Serial.print(temperature);
+      Serial.print("°C");
+      Serial.print(", humidité :");
+      Serial.print(humidity);
+      Serial.println("%");
       // Print deltas
-      Serial.print("  delta 30mn :");
+      Serial.print("  delta 30mn : ");
       Serial.print(deltaLast30mn);
       Serial.println("cm");
-      Serial.print("  delta 1h :");
+      Serial.print("  delta 1h   : ");
       Serial.print(deltaLast1h);
       Serial.println("cm");
-      Serial.print("  delta 3h :");
+      Serial.print("  delta 3h   : ");
       Serial.print(deltaLast3h);
       Serial.println("cm");
-      Serial.print("  delta 6h :");
+      Serial.print("  delta 6h   : ");
       Serial.print(deltaLast6h);
       Serial.println("cm");
-      Serial.print("  delta 12h :");
+      Serial.print("  delta 12h  : ");
       Serial.print(deltaLast12h);
       Serial.println("cm");
-      Serial.print("  delta 1j :");
+      Serial.print("  delta 1j   : ");
       Serial.print(deltaLast1j);
       Serial.println("cm");
-      Serial.print("  delta 7j :");
+      Serial.print("  delta 7j   : ");
       Serial.print(deltaLast7j);
       Serial.println("cm");
-      Serial.print("  delta 14j :");
+      Serial.print("  delta 14j  : ");
       Serial.print(deltaLast14j);
       Serial.println("cm");
-      Serial.print("  delta 1m :");
+      Serial.print("  delta 1m   : ");
       Serial.print(deltaLast1m);
       Serial.println("cm");
-      Serial.print("  delta 3m :");
+      Serial.print("  delta 3m   : ");
       Serial.print(deltaLast3m);
       Serial.println("cm");
-      Serial.print("  delta 6m :");
+      Serial.print("  delta 6m   : ");
       Serial.print(deltaLast6m);
       Serial.println("cm");
-      Serial.print("  delta 1a :");
+      Serial.print("  delta 1a   : ");
       Serial.print(deltaLast1a);
       Serial.println("cm");
-    }
-    // Envoi de la mesure en Bluetooth
-    BtSerial.println(depth);
-    BtSerial.print("  delta 30mn :");
-    BtSerial.print(deltaLast30mn);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 1h :");
-    BtSerial.print(deltaLast1h);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 3h :");
-    BtSerial.print(deltaLast3h);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 6h :");
-    BtSerial.print(deltaLast6h);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 12h :");
-    BtSerial.print(deltaLast12h);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 1j :");
-    BtSerial.print(deltaLast1j);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 7j :");
-    BtSerial.print(deltaLast7j);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 14j :");
-    BtSerial.print(deltaLast14j);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 1m :");
-    BtSerial.print(deltaLast1m);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 3m :");
-    BtSerial.print(deltaLast3m);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 6m :");
-    BtSerial.print(deltaLast6m);
-    BtSerial.println("cm");
-    BtSerial.print("  delta 1a :");
-    BtSerial.print(deltaLast1a);
-    BtSerial.println("cm");
-    // Réception d'action depuis le Bluetooth
 
+      // Envoi de la mesure en Bluetooth
+      sendDataToBluetooth();
+    }
+
+    // Réception d'action depuis le Bluetooth
     if (BtSerial.available()) {
       // Read the bluetooth command without CR LF
       String bluetoothCommand = BtSerial.readString();
       bluetoothCommand.trim();
       Serial.print("bluetooth command received : ");
-      Serial.println(bluetoothCommand);
-      /* 
-      commandCode = BtSerial.read();
-      Serial.print("commande recue : ");
-      Serial.println(commandCode);
-      
-      // Define actions for command code :
-      if (commandCode == '1') {digitalWrite(12, HIGH);}
-      if (commandCode == '0') {digitalWrite(12, LOW);}
-      if (commandCode == '2') {digitalWrite(10, HIGH);}
-      if (commandCode == '3') {digitalWrite(10, LOW);}
-      */
+      Serial.println(bluetoothCommand);M
+      // Define actions for command code "M" : send to Bluetooth the last measures
+      if (bluetoothCommand.equals('M')) {
+        sendDataToBluetooth();
+      }
     }
   }
   // Réception d'action depuis le terminal ---------------
@@ -286,30 +260,40 @@ void loop() {
     if (consoleCommand == "AT") {
       Serial.println("console command to go to AT COMMAND mode");
       isInATmode = true;
-      // Set all the LEDS ON in AT MODE
-      digitalWrite(greenLedPin, HIGH);
-      digitalWrite(yellowLedPin, HIGH);
-      digitalWrite(redLedPin, HIGH);
-      Serial.println("Module in AT commands mode, please enter AT command (after chercking that terminal send both NL + CR)");
+      // Set HC-05 mode
+      SetHC5Mode();
     }
-    // If "EXIT" in AT COMMAND mode, return to DATA mode
-    if (consoleCommand == "EXIT") {
+    // If "X" in AT COMMAND mode, return to DATA mode
+    if (consoleCommand == "X") {
       Serial.println("console command to go to DATA mode");
       isInATmode = false;
-      // Set all the alarms LEDS
-      displayAlarmLeds();
-      Serial.println("Module in DATA mode");
+      // Set HC-05 mode
+      SetHC5Mode();
     }
   }
 }
 
 // ---------------------------------------------------------
-// Fonction d'affichage des alarmes LED'
+// Fonction de gestion de la PIN Key du HC-05
 //----------------------------------------------------------
-void displayAlarmLeds() {
-  digitalWrite(greenLedPin, LOW);
-  digitalWrite(yellowLedPin, LOW);
-  digitalWrite(redLedPin, LOW);
+void SetHC5Mode() {
+  if (isInATmode) {
+    // Set the HC-05 key pin
+    // Set the LEDs
+    digitalWrite(greenLedPin, HIGH);
+    digitalWrite(yellowLedPin, HIGH);
+    digitalWrite(redLedPin, HIGH);
+    // Display the message
+    Serial.println("Module in AT commands mode, please enter AT command (after chercking that terminal send both NL + CR)");
+  } else {
+    // Set the HC-05 key pin
+    // Set the LEDs
+    digitalWrite(greenLedPin, LOW);
+    digitalWrite(yellowLedPin, LOW);
+    digitalWrite(redLedPin, LOW);
+    // Display the message
+    Serial.println("Module in DATA mode");
+  }
 }
 
 // ---------------------------------------------------------
@@ -323,4 +307,57 @@ float getDepth() {
   depthMesure = (dataCurrent - CURRENT_INIT) * (RANGE / DENSITY_WATER / 16.0 / 10);  //Calculate depth from current readings in cm
   //  if (depthMesure < 0) depthMesure = 0.0;
   return depthMesure;
+}
+
+// ---------------------------------------------------------
+// Fonction d'envoie des données Bluetooth
+//----------------------------------------------------------
+void sendDataToBluetooth() {
+  BtSerial.print(measures_nb);
+  BtSerial.println(" ---------------------------------------");
+  BtSerial.print("profondeur : ");
+  BtSerial.print(depth);
+  BtSerial.print("cm");
+  BtSerial.print(", température :");
+  BtSerial.print(temperature);
+  BtSerial.print("°C");
+  BtSerial.print(", humidité :");
+  BtSerial.print(humidity);
+  BtSerial.println("%");
+  BtSerial.print("  delta 30mn : ");
+  BtSerial.print(deltaLast30mn);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 1h   : ");
+  BtSerial.print(deltaLast1h);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 3h   : ");
+  BtSerial.print(deltaLast3h);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 6h   : ");
+  BtSerial.print(deltaLast6h);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 12h  : ");
+  BtSerial.print(deltaLast12h);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 1j   : ");
+  BtSerial.print(deltaLast1j);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 7j   : ");
+  BtSerial.print(deltaLast7j);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 14j  : ");
+  BtSerial.print(deltaLast14j);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 1m   : ");
+  BtSerial.print(deltaLast1m);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 3m   : ");
+  BtSerial.print(deltaLast3m);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 6m   : ");
+  BtSerial.print(deltaLast6m);
+  BtSerial.println("cm");
+  BtSerial.print("  delta 1a   : ");
+  BtSerial.print(deltaLast1a);
+  BtSerial.println("cm");
 }

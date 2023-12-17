@@ -7,6 +7,7 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
 - affichage pour voir les données :
   - E44 display + clavier 2x16 : https://whadda.com/fr/produit/module-lcd-et-clavier-pour-arduino-lcd1602-wpsh203/
   - écran tactile : https://www.gotronic.fr/art-shield-ecran-tactile-2-8-tf028-28507.htm
+  	- tutorial : https://docs.arduino.cc/retired/getting-started-guides/TFT
 - capteur de profondeur (pas de nécessité de capteur de pression athmosphérique : la différence est mesurée) :
   - https://wiki.dfrobot.com/Throw-in_Type_Liquid_Level_Transmitter_SKU_KIT0139
   - https://www.gotronic.fr/art-capteur-de-pression-etanche-gravity-kit0139-32275.htm#complte_desc
@@ -30,6 +31,8 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
 ## Versions
 
 ### V00
+  #### Hardware :
+    Arduino power plug from 7 to 12V (Volts) of DC (Direct Current) : 5.5mm diameter cylindrical plug with 2.1mm pin hole, and that provides Positive voltage on the inside pin hole and Negative (or common/ground) voltage on the outside cylindrical sleeve of the connector plug.
   #### partie CAVE
     ##### logiciel CAVE_01
     Il effectue les tâches suivantes
@@ -83,12 +86,21 @@ Avec UBUNTU, la stack de gestion Bluetooth est déjà installée `bluez`. Il res
 - `sudo apt install minicom`
 
 ### Utilisation
-- utiliser `bluetoothctl`
-- `scan on`
-- `agent on`
-- `pair 98:D3:11:FD:23:2C` en fournissant éventuellement le PIB code
-- lancer le terminal avec la bonne config : `sudo minicom bluetooth`
+- 1) Connecter le device Bluetooth
+	- utiliser `bluetoothctl`
+	- `scan on`
+	- `agent on`
+	- `pair 98:D3:11:FD:23:2C` en fournissant éventuellement le PIN code
+	- `connect 98:D3:11:FD:23:2C`
+- 2) Y attacher le device série `rfcommm0`
+	- `sudo killall rfcomm`
+	- `sudo rfcomm connect /dev/rfcomm0 98:D3:11:FD:23:2C 1 &`
+- 3) Lancer le terminal sur le device série connecté sur `/dev/rfcomm0` (config appelée `bluetooth`) : `sudo minicom bluetooth`
+
+Nb :
 - pour supprimer avec bluetoothctl (si PIN code pas demandé) :  disconnect, untrust, and remove the device by bluetooth MAC address.
+- pour obtenir des informations sur l'état du device : `bluetoothctl info 98:D3:11:FD:23:2C`, à noter `UUID: Serial Port `.
+- pour voir les ports RFCOMM utilisés : `rfcomm -a`
 
 ## B2) Connexion avec un Nokia 8118 en Bluetooth
 
