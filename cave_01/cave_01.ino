@@ -241,7 +241,7 @@ void loop() {
       String bluetoothCommand = BtSerial.readString();
       bluetoothCommand.trim();
       Serial.print("bluetooth command received : ");
-      Serial.println(bluetoothCommand);M
+      Serial.println(bluetoothCommand);
       // Define actions for command code "M" : send to Bluetooth the last measures
       if (bluetoothCommand.equals('M')) {
         sendDataToBluetooth();

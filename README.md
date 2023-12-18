@@ -78,6 +78,17 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
 UNO a un ADC de 10 bits seulement => précision de 0,48 cm. c'est suffisant. Mais Pour des convertisseurs 12 bits, on peut utiliser les arduino suivants : The Zero, Due, MKR family and Nano 33 (BLE and IoT) boards have 12-bit ADC capabilities that can be accessed by changing the resolution to 12.
 
 
+## Logiciel CAVE_02
+Correspond à l'afficheur Arduino des données transmises par la cave.
+La configuration du module HC05 est alors la suivante :
+- réinitialiser les paramètres par défaut : `AT+ORGL`
+- effacer les appareils apairés : `AT+RMAAD`
+- configurer le mot de passe : `AT+PSWD=9362`
+- assigner le mode esclave : `AT+ROLE=1`
+- modifier le nom : `AT+NAME=CAVE_FB MASTER`
+- mettre en connexion vers adresse unique : `AT+CMODE=0`
+- donner l'adresse du module distant : `AT+BIND=98d3,11,fd232c`
+
 ## B1) Connexion avec un PC Ubuntu avec Bluetooth
 Cf : `http://www.userk.co.uk/arduino-bluetooth-linux/`
 ### Installation

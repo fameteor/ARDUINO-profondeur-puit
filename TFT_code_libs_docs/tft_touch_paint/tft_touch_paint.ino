@@ -133,28 +133,55 @@ void setup(void) { //body
     identifier=0x9341;
    
   }
+currentcolor = RED;
+
 
   tft.begin(identifier);
-  tft.setRotation(2);
+  tft.setRotation(1);
 
   tft.fillScreen(BLACK);
 
-  tft.fillRect(0, 0, BOXSIZE, BOXSIZE, RED);
-  tft.fillRect(BOXSIZE, 0, BOXSIZE, BOXSIZE, YELLOW);
-  tft.fillRect(BOXSIZE*2, 0, BOXSIZE, BOXSIZE, GREEN);
-  tft.fillRect(BOXSIZE*3, 0, BOXSIZE, BOXSIZE, CYAN);
-  tft.fillRect(BOXSIZE*4, 0, BOXSIZE, BOXSIZE, BLUE);
-  tft.fillRect(BOXSIZE*5, 0, BOXSIZE, BOXSIZE, MAGENTA);
-  tft.fillRect(BOXSIZE*5, (tft.height() - BOXSIZE), BOXSIZE, BOXSIZE, WHITE);
+  
+// Bouton de droite
+  tft.fillRect(240, 200, 80, 40, WHITE); // (x,y,widthx,widthy,color)
+  // Bouton de gauche
+   tft.fillRect(0, 200, 80, 40, WHITE);
 
-  tft.drawRect(0, 0, BOXSIZE, BOXSIZE, WHITE);
-  currentcolor = RED;
+  
 
-  tft.setCursor(5, 10);
-  tft.setRotation(0);
-  tft.setTextColor(BLACK);  tft.setTextSize(2);
-  tft.println("Ers");
-  tft.setRotation(2);
+  tft.setCursor(1, 5);
+
+  tft.setRotation(1); //0,1,2 ou 3
+  tft.setTextSize(2);
+  tft.setTextColor(WHITE); 
+  tft.println("120 ---------");
+  tft.setTextColor(BLUE); 
+  tft.println("profondeur 340cm");
+  tft.setTextColor(CYAN); 
+  tft.println("  delta 30 mn : -20.00cm");
+  tft.println("  delta 1h    : -20.00cm");
+  tft.println("  delta 3h    : -20.00cm");
+  tft.println("  delta 6h    : -20.00cm");
+  tft.setTextColor(GREEN); 
+  tft.println("temperature : 22°C");
+  tft.println("humidite : 66%");
+
+  tft.print(tft.width());
+  tft.print("x");
+  tft.println(tft.height());
+  // Légende des touches
+  tft.setCursor(0, 200);
+  tft.setTextSize(3);
+  tft.setTextColor(BLACK); 
+  tft.println("<");
+  tft.setCursor(240, 200);
+  tft.setTextSize(3);
+  tft.setTextColor(BLACK); 
+  tft.println(">");
+
+  
+
+  
   
   pinMode(13, OUTPUT);
 }
