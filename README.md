@@ -1,48 +1,50 @@
-# ARDUINO-profondeur-puit
-Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
+# Introduction
+Cet appareil se compose d'une carte Arduino UNO (appelée "module CAVE" ) placée dans la cave et permettant de :
+- mesurer :
+	- la hauteur d'eau dans un puit,
+	- les deltas de hauteur sur 30 mn, 1 h, 3 h, 6 h, 12 h, 1 jour, 7 jour, 14 jour, 1 mois, 3 mois, 6 mois, 1 an,
+	- la température,
+	- l'humidité
+- calculer des alarmes orange et rouge pour prévenir d'un débordement dû à la montée de la nappe phréatique,
+- transmettre en Bluetooth ces éléments sous format JSON.
 
-## Matériel nécessaire
-- arduino avec carte mémoire pour enregistrer une mesure par heure :
-  - tutorial et liste SD cards : https://docs.arduino.cc/learn/programming/sd-guide
-- affichage pour voir les données :
-  - E44 display + clavier 2x16 : https://whadda.com/fr/produit/module-lcd-et-clavier-pour-arduino-lcd1602-wpsh203/
-  - écran tactile : https://www.gotronic.fr/art-shield-ecran-tactile-2-8-tf028-28507.htm
-  	- tutorial : https://docs.arduino.cc/retired/getting-started-guides/TFT
-- capteur de profondeur (pas de nécessité de capteur de pression athmosphérique : la différence est mesurée) :
-  - https://wiki.dfrobot.com/Throw-in_Type_Liquid_Level_Transmitter_SKU_KIT0139
-  - https://www.gotronic.fr/art-capteur-de-pression-etanche-gravity-kit0139-32275.htm#complte_desc
-- capteur de température
-- carte bluetooth : HC05 est maitre/esclave, HC06 est seulement esclave :
-  - carte HC05 HC06 : https://arduino-france.site/bluetooth-hc-05/
-  - fonctionnement en maitre/esclave : https://wikilab.myhumankit.org/index.php?title=Ressources:Communication_Bluetooth_HC_05
-  - datasheet : https://components101.com/wireless/hc-05-bluetooth-module
-  - the basis of bluetooth : https://www.opensourceforu.com/2015/06/linux-without-wires-the-basics-of-bluetooth/
-- affichage possible sur :
-  - autre arduino
-  - nokia 8110
-    - KAIos bluetooth API : https://developer.kaiostech.com/docs/api/web-apis/bluetooth/bluetooth/
-  - android
-  - PC :
-    - https://www.baeldung.com/linux/bluetooth-via-terminal
-    - send data via Bluetooth : http://www.userk.co.uk/arduino-bluetooth-linux/
-    - another solution : https://avilpage.com/2017/10/bluetooth-communication-between-ubuntu-android.html
+Un second appareil (appelé "module AFFICHAGE") permet d'afficher ces données. cet appareil peut-être :
+- une carte Arduino,
+- un PC sous LINUX,
+- un téléphone Nokia,
+- un téléphone Android 
+
     
 # Structure JSON transmise
-Les données transmises sont formatées de la façon suivante :
+Les données transmises sont formatées en JSON de la façon suivante :
 ```
 {
-  "nb": 36665,	// number of measure
-  "temp": 13,	// temperature
-  "wet": 80,	// humidity
+  "nb": 36665,		// number of measure
+  "temp": 13,		// temperature
+  "wet": 80,		// humidity
   "height": 335.45,	// water height
   "d_30mn": -2.45,	// delta water height during 30 minutes
   "d_1h": -30.54,	// delta water height during 1 hour
   "d_3h": -45.78	// delta water height during 3 hours
 }
 ```
-    
+# Module CAVE
+## Hardware
+## Utilisation
+## Améliorations
+- ajouter un horodatage aux mesures
 
-## Versions
+# Module AFFICHAGE
+## Version Arduino
+### Hardware
+### Utilisation
+### Améliorations
+- stoquer les données dans la carte SIM
+- afficher une courbe de variation de hauteur
+## Version PC LINUX
+## Version NOKIA 8110
+## Version Android
+-----------------------------------------------------------------------------
 
 ### V00
   #### Hardware :
@@ -151,3 +153,29 @@ Informations :
   Each profile as a globally unique ID, the UUID. Profiles standardized by the Bluetooth Special Interests Group (SIG) have a 128bit-UUID in the form of 0000XXXX-0000-1000-8000-00805F9B34FB. 
   
 Ce qui nous intéresse semble le `Serial Port Bluetooth Profile (SPP)`
+
+## Matériel nécessaire
+- arduino avec carte mémoire pour enregistrer une mesure par heure :
+  - tutorial et liste SD cards : https://docs.arduino.cc/learn/programming/sd-guide
+- affichage pour voir les données :
+  - E44 display + clavier 2x16 : https://whadda.com/fr/produit/module-lcd-et-clavier-pour-arduino-lcd1602-wpsh203/
+  - écran tactile : https://www.gotronic.fr/art-shield-ecran-tactile-2-8-tf028-28507.htm
+  	- tutorial : https://docs.arduino.cc/retired/getting-started-guides/TFT
+- capteur de profondeur (pas de nécessité de capteur de pression athmosphérique : la différence est mesurée) :
+  - https://wiki.dfrobot.com/Throw-in_Type_Liquid_Level_Transmitter_SKU_KIT0139
+  - https://www.gotronic.fr/art-capteur-de-pression-etanche-gravity-kit0139-32275.htm#complte_desc
+- capteur de température
+- carte bluetooth : HC05 est maitre/esclave, HC06 est seulement esclave :
+  - carte HC05 HC06 : https://arduino-france.site/bluetooth-hc-05/
+  - fonctionnement en maitre/esclave : https://wikilab.myhumankit.org/index.php?title=Ressources:Communication_Bluetooth_HC_05
+  - datasheet : https://components101.com/wireless/hc-05-bluetooth-module
+  - the basis of bluetooth : https://www.opensourceforu.com/2015/06/linux-without-wires-the-basics-of-bluetooth/
+- affichage possible sur :
+  - autre arduino
+  - nokia 8110
+    - KAIos bluetooth API : https://developer.kaiostech.com/docs/api/web-apis/bluetooth/bluetooth/
+  - android
+  - PC :
+    - https://www.baeldung.com/linux/bluetooth-via-terminal
+    - send data via Bluetooth : http://www.userk.co.uk/arduino-bluetooth-linux/
+    - another solution : https://avilpage.com/2017/10/bluetooth-communication-between-ubuntu-android.html
