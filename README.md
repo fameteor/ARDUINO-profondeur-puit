@@ -22,10 +22,10 @@ Les données transmises sont formatées en JSON de la façon suivante :
   "nb": 36665,		// number of measure
   "temp": 13,		// temperature
   "wet": 80,		// humidity
-  "height": 335.45,	// water height
-  "d_30mn": -2.45,	// delta water height during 30 minutes
-  "d_1h": -30.54,	// delta water height during 1 hour
-  "d_3h": -45.78	// delta water height during 3 hours
+  "height": 335.45,	// water height (cm)
+  "d_30mn": -2.45,	// delta water height during 30 minutes (cm)
+  "d_1h": -30.54,	// delta water height during 1 hour (cm)
+  "d_3h": -45.78	// delta water height during 3 hours (cm)
 }
 ```
 # Module CAVE
