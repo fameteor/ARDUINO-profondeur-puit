@@ -7,6 +7,7 @@
 #include <Elegoo_GFX.h>     // Core graphics library
 #include <Elegoo_TFTLCD.h>  // Hardware-specific library
 #include <TouchScreen.h>
+#include <ArduinoJson.h>
 
 #if defined(__SAM3X8E__)
 #undef __FlashStringHelper::F(string_literal)
@@ -97,7 +98,13 @@ Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 #define BOXSIZE 40
 #define PENRADIUS 3
 
+String dataReceived;
+
+String errorLog = "";
+
 void setup(void) {  //body
+  log("setup");
+
   Serial.begin(38400);
 
   tft.reset();
@@ -145,20 +152,39 @@ void setup(void) {  //body
 #define MINPRESSURE 10
 #define MAXPRESSURE 1000
 
+StaticJsonDocument<200> dataMeasure;
+
 void loop()  //func. definition
 {
+  // Display Bluetooth received data -----------------------
+  if (Serial.available() > 0) {
+    // Display the bluetooth received data
+    //displayTerminalData(Serial.readString());
+    dataReceived = Serial.readString();
+    log("data received : " + dataReceived);
+    dataReceived.trim();
+    // Serial.println(dataReceived);
+    displayTerminalData(dataReceived);
+
+    // Affichage en JSON
+    DeserializationError error = deserializeJson(dataMeasure, dataReceived);
+
+    // Test if parsing succeeds.
+    if (error) {
+      log(error.f_str());
+      return;
+    } else {
+      long time = dataMeasure["time"];
+      long temp = dataMeasure["temp"];
+      log(String(time));
+      log(String(temp));
+    }
+  }
+
+  // Manage Touchscreen --------------------------------------
   digitalWrite(13, HIGH);
   TSPoint p = ts.getPoint();
   digitalWrite(13, LOW);
-
-  // Display Bluetooth received data
-  if (Serial.available()) {
-    clearTerminalZone();
-    // Display the bluetooth received data
-    displayTerminalData(Serial.readString());
-  }
-
-  // Manage Touchscreen
   // if sharing pins, you'll need to fix the directions of the touchscreen pins
   //pinMode(XP, OUTPUT);
   pinMode(XM, OUTPUT);
@@ -189,18 +215,21 @@ void loop()  //func. definition
     if (p.x < 220) {
       // Serial.println("touche");
       if (p.y < 280) {
-        clearTerminalZone();
-        displayTerminalData("fct4");
+        // Serial.println("fct4");
+        displayTerminalData(dataReceived);
       } else if (p.y < 490) {
-        clearTerminalZone();
-        displayTerminalData("fct3");
+        // Serial.println("fct3");
+        if (errorLog.length() == 0) {
+          displayTerminalData("Log vide !!!");
+        } else {
+          displayTerminalData(errorLog);
+        }
       } else if (p.y < 710) {
-        clearTerminalZone();
-        displayTerminalData("fct2");
+        // Serial.println("fct2");
+        structuredDataDisplay();
       } else {
-        clearTerminalZone();
-        displayTerminalData("fct1");
-        
+        // Serial.println("fct1");
+        displayTerminalData(dataReceived);
       }
     }
   }
@@ -220,21 +249,30 @@ void displayButtons() {
   // Légende des touches ----------------
   tft.setTextSize(2);
   tft.setTextColor(BLUE);
-  // De gauche à droite
+  // De gauche à droite : Fct1
   tft.setCursor(15, 210);
   tft.println("fct1");
-  tft.setCursor(95, 210);
-  tft.println("fct2");
+  // fct 2
+  tft.setTextSize(2);
+  tft.setCursor(82, 210);
+  tft.println("format");
+  // fct3
+  tft.setTextSize(2);
   tft.setCursor(175, 210);
-  tft.println("fct3");
-  tft.setCursor(255, 210);
-  tft.println("fct4");
+  tft.println("log");
+  // fct 4
+  tft.setTextSize(1.5);
+  tft.setCursor(255, 207);
+  tft.println("donnees");
+  tft.setCursor(258, 219);
+  tft.println("brutes");
 }
 
 // ---------------------------------------------------------
 // Ecriture des données terminal
 //----------------------------------------------------------
 void displayTerminalData(String text) {
+  clearTerminalZone();
   tft.setRotation(1);  // 0 : portrait, 1 : landscape, 2 ou 3 en continuant à tourner
   tft.setCursor(2, 2);
   tft.setTextSize(2);
@@ -254,4 +292,51 @@ void clearTerminalZone() {
 //----------------------------------------------------------
 void clearScreen() {
   tft.fillRect(0, 0, tft.width(), tft.height(), BLACK);  // (x,y,widthx,widthy,color)
+}
+
+// ---------------------------------------------------------
+// Affichage des données structurées
+//----------------------------------------------------------
+void structuredDataDisplay() {
+  clearTerminalZone();
+  tft.setRotation(1);  // 0 : portrait, 1 : landscape, 2 ou 3 en continuant à tourner
+  tft.setTextSize(2);
+  tft.setTextColor(YELLOW);
+  tft.setCursor(2, 2);
+  tft.println("Temperature");
+  tft.setCursor(200, 2);
+  long temp = dataMeasure["temp"];
+  tft.print(temp);
+  tft.println(" C");
+
+  tft.setTextColor(GREEN);
+  tft.setCursor(2, 22);
+  tft.println("Humidite");
+  tft.setCursor(200, 22);
+  tft.println("66 %");
+  tft.setTextColor(CYAN);
+  tft.setCursor(2, 62);
+  tft.println("Hauteur d'eau");
+  tft.setCursor(200, 62);
+  tft.println("335 cm");
+  tft.setTextColor(BLUE);
+  tft.setCursor(2, 82);
+  tft.println("- delta 30 mn");
+  tft.setCursor(200, 82);
+  tft.println("-10 cm");
+  tft.setCursor(2, 102);
+  tft.println("- delta 1 h");
+  tft.setCursor(200, 102);
+  tft.println("-10 cm");
+  tft.setCursor(2, 122);
+  tft.println("- delta 3 h");
+  tft.setCursor(200, 122);
+  tft.println("-10 cm");
+}
+
+// ---------------------------------------------------------
+// Logging
+//----------------------------------------------------------
+void log(String text) {
+  errorLog = errorLog + text + "\n";
 }

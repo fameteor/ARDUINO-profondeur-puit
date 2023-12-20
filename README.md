@@ -27,6 +27,10 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
     - send data via Bluetooth : http://www.userk.co.uk/arduino-bluetooth-linux/
     - another solution : https://avilpage.com/2017/10/bluetooth-communication-between-ubuntu-android.html
     
+# Structure JSON transmise
+Les données transmises sont formatées de la façon suivante :
+`{"nb":36665,"temp":12,"wet":78,"height":335.45,"d_30mn":-2;45,"d_1h":-30.54,"d_3h":-45.78}`
+    
 
 ## Versions
 
