@@ -29,7 +29,17 @@ Projet ARDUINO pour mesurer la hauteur d'eau dans un puit.
     
 # Structure JSON transmise
 Les données transmises sont formatées de la façon suivante :
-`{"nb":36665,"temp":12,"wet":78,"height":335.45,"d_30mn":-2;45,"d_1h":-30.54,"d_3h":-45.78}`
+```
+{
+  "nb": 36665,	// number of measure
+  "temp": 13,	// temperature
+  "wet": 80,	// humidity
+  "height": 335.45,	// water height
+  "d_30mn": -2.45,	// delta water height during 30 minutes
+  "d_1h": -30.54,	// delta water height during 1 hour
+  "d_3h": -45.78	// delta water height during 3 hours
+}
+``
     
 
 ## Versions

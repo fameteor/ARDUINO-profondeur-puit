@@ -103,7 +103,6 @@ String dataReceived;
 String errorLog = "";
 
 void setup(void) {  //body
-  log("setup");
 
   Serial.begin(38400);
 
@@ -144,7 +143,7 @@ void setup(void) {  //body
 
 
   // Texte des capteurs
-  displayTerminalData("120 ---------\l\nprof. 340cm\l\n  delta 30 mn : -20.00cm\l\n  delta 1h    : -20.00cm\l\n  delta 3h    : -20.00cm\l\l  delta 6h    : -20.00cm");
+  displayTerminalData("Attente de donnees...");
 
   pinMode(13, OUTPUT);
 }
@@ -161,12 +160,8 @@ void loop()  //func. definition
     // Display the bluetooth received data
     //displayTerminalData(Serial.readString());
     dataReceived = Serial.readString();
-    log("data received : " + dataReceived);
     dataReceived.trim();
-    // Serial.println(dataReceived);
-    displayTerminalData(dataReceived);
-
-    // Affichage en JSON
+    // JSON to structure
     DeserializationError error = deserializeJson(dataMeasure, dataReceived);
 
     // Test if parsing succeeds.
@@ -174,10 +169,7 @@ void loop()  //func. definition
       log(error.f_str());
       return;
     } else {
-      long time = dataMeasure["time"];
-      long temp = dataMeasure["temp"];
-      log(String(time));
-      log(String(temp));
+      structuredDataDisplay();
     }
   }
 
@@ -226,10 +218,10 @@ void loop()  //func. definition
         }
       } else if (p.y < 710) {
         // Serial.println("fct2");
-        structuredDataDisplay();
+        displayTerminalData("Non implemente");
       } else {
         // Serial.println("fct1");
-        displayTerminalData(dataReceived);
+        structuredDataDisplay();
       }
     }
   }
@@ -247,21 +239,21 @@ void displayButtons() {
   tft.fillRect(160, 200, 75, 35, WHITE);
   tft.fillRect(240, 200, 75, 35, WHITE);
   // Légende des touches ----------------
-  tft.setTextSize(2);
+  tft.setTextSize(1);
   tft.setTextColor(BLUE);
   // De gauche à droite : Fct1
-  tft.setCursor(15, 210);
-  tft.println("fct1");
+  tft.setCursor(24, 212);
+  tft.println("cave");
   // fct 2
-  tft.setTextSize(2);
-  tft.setCursor(82, 210);
-  tft.println("format");
+  tft.setTextSize(1);
+  tft.setCursor(100, 212);
+  tft.println("maison");
   // fct3
-  tft.setTextSize(2);
-  tft.setCursor(175, 210);
-  tft.println("log");
+  tft.setTextSize(1);
+  tft.setCursor(185, 212);
+  tft.println("logs");
   // fct 4
-  tft.setTextSize(1.5);
+  tft.setTextSize(1);
   tft.setCursor(255, 207);
   tft.println("donnees");
   tft.setCursor(258, 219);
@@ -301,37 +293,58 @@ void structuredDataDisplay() {
   clearTerminalZone();
   tft.setRotation(1);  // 0 : portrait, 1 : landscape, 2 ou 3 en continuant à tourner
   tft.setTextSize(2);
-  tft.setTextColor(YELLOW);
+  // Nb de mesure
+  tft.setTextColor(RED);
   tft.setCursor(2, 2);
+  long nb = dataMeasure["nb"];
+  tft.print("Nb de mesures : ");
+  tft.println(nb);
+  // Temperature
+  tft.setTextColor(YELLOW);
+  tft.setCursor(2, 32);
   tft.println("Temperature");
-  tft.setCursor(200, 2);
+  tft.setCursor(200, 32);
   long temp = dataMeasure["temp"];
   tft.print(temp);
   tft.println(" C");
-
+  // Wetness
   tft.setTextColor(GREEN);
-  tft.setCursor(2, 22);
+  tft.setCursor(2, 52);
   tft.println("Humidite");
-  tft.setCursor(200, 22);
-  tft.println("66 %");
+  tft.setCursor(200, 52);
+  long wet = dataMeasure["wet"];
+  tft.print(wet);
+  tft.println(" %");
+  // Water height
   tft.setTextColor(CYAN);
-  tft.setCursor(2, 62);
-  tft.println("Hauteur d'eau");
-  tft.setCursor(200, 62);
-  tft.println("335 cm");
-  tft.setTextColor(BLUE);
   tft.setCursor(2, 82);
-  tft.println("- delta 30 mn");
+  tft.println("Hauteur d'eau");
   tft.setCursor(200, 82);
-  tft.println("-10 cm");
+  int height = dataMeasure["height"];
+  tft.print(height);
+  tft.println(" cm");
+  // Delta 30mn
+  tft.setTextColor(BLUE);
   tft.setCursor(2, 102);
-  tft.println("- delta 1 h");
+  tft.println("- delta 30 mn");
   tft.setCursor(200, 102);
-  tft.println("-10 cm");
+  int d_30mn = dataMeasure["d_30mn"];
+  tft.print(d_30mn);
+  tft.println(" cm");
+  // Delta 1h
   tft.setCursor(2, 122);
-  tft.println("- delta 3 h");
+  tft.println("- delta 1 h");
   tft.setCursor(200, 122);
-  tft.println("-10 cm");
+  int d_1h = dataMeasure["d_1h"];
+  tft.print(d_1h);
+  tft.println(" cm");
+  // Delta 1h
+  tft.setCursor(2, 142);
+  tft.println("- delta 3 h");
+  tft.setCursor(200, 142);
+  int d_3h = dataMeasure["d_3h"];
+  tft.print(d_3h);
+  tft.println(" cm");
 }
 
 // ---------------------------------------------------------
