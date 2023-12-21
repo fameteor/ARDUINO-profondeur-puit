@@ -28,19 +28,25 @@ Les données transmises sont formatées en JSON de la façon suivante :
   "d_3h": -45.78	// delta water height during 3 hours (cm)
 }
 ```
+Jeu de données pour tests : `{"nb":36665,"temp":13,"wet":80,"height":335.45,"d_30mn":-2.45,"d_1h":-30.54,"d_3h":-45.78}`
 # Module CAVE
 ## Hardware
 ## Utilisation
 ## Améliorations
-- ajouter un horodatage aux mesures
+- Ajouter un horodatage aux mesures.
 
 # Module AFFICHAGE
 ## Version Arduino
 ### Hardware
 ### Utilisation
 ### Améliorations
-- stoquer les données dans la carte SIM
-- afficher une courbe de variation de hauteur
+- Afficher les caractères accentués (https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts),
+- Afficher les touches de fonctions du menu en cours en grisé, 
+- Stoquer les données dans la carte SIM,
+- Afficher une courbe de variation de hauteur,
+- Passage de l'affichage en mode veille au bout d'un certain temps,
+- Afficher température et humidité dans la maison.
+
 ## Version PC LINUX
 ## Version NOKIA 8110
 ## Version Android

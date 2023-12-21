@@ -313,51 +313,48 @@ float getDepth() {
 // Fonction d'envoie des données Bluetooth
 //----------------------------------------------------------
 void sendDataToBluetooth() {
+  // JSON formtting : {"nb":36665,"temp":13,"wet":80,"height":335.45,"d_30mn":-2.45,"d_1h":-30.54,"d_3h":-45.78}
+  BtSerial.print("{\"nb\":");
   BtSerial.print(measures_nb);
-  BtSerial.println(" ---------------------------------------");
-  BtSerial.print("profondeur : ");
-  BtSerial.print(depth);
-  BtSerial.print("cm");
-  BtSerial.print(", température :");
+  BtSerial.print(",\"temp\":");
   BtSerial.print(temperature);
-  BtSerial.print("°C");
-  BtSerial.print(", humidité :");
+  BtSerial.print(",\"wet\":");
   BtSerial.print(humidity);
-  BtSerial.println("%");
-  BtSerial.print("  delta 30mn : ");
+  BtSerial.print(",\"height\":");
+  BtSerial.print(depth);
+  BtSerial.print(",\"d_30mn\":");
   BtSerial.print(deltaLast30mn);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 1h   : ");
+  BtSerial.print(",\"d_1h\":");
   BtSerial.print(deltaLast1h);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 3h   : ");
+  BtSerial.print(",\"d_3h\":");
   BtSerial.print(deltaLast3h);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 6h   : ");
+  BtSerial.print("}");
+  /*
   BtSerial.print(deltaLast6h);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 12h  : ");
   BtSerial.print(deltaLast12h);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 1j   : ");
   BtSerial.print(deltaLast1j);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 7j   : ");
   BtSerial.print(deltaLast7j);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 14j  : ");
   BtSerial.print(deltaLast14j);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 1m   : ");
   BtSerial.print(deltaLast1m);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 3m   : ");
   BtSerial.print(deltaLast3m);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 6m   : ");
   BtSerial.print(deltaLast6m);
-  BtSerial.println("cm");
-  BtSerial.print("  delta 1a   : ");
   BtSerial.print(deltaLast1a);
-  BtSerial.println("cm");
+  */
+  /*
+  Serial.print("{\"nb\":");
+  Serial.print(measures_nb);
+  Serial.print(",\"temp\":");
+  Serial.print(temperature);
+  Serial.print(",\"wet\":");
+  Serial.print(humidity);
+  Serial.print(",\"height\":");
+  Serial.print(depth);
+  Serial.print(",\"d_30mn\":");  
+  Serial.print(deltaLast30mn);
+  Serial.print(",\"d_1h\":");
+  Serial.print(deltaLast1h);
+  Serial.print(",\"d_3h\":");
+  Serial.print(deltaLast3h);
+  Serial.print("}");
+  */
 }
