@@ -98,8 +98,14 @@ Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 #define BOXSIZE 40
 #define PENRADIUS 3
 
+// States values
+enum { INIT,
+       CELLAR_DATA,
+       HOUSE_DATA,
+       LOGS,
+       RAW_DATA };  // Display states
+int currentState = INIT;
 String dataReceived;
-
 String errorLog = "";
 
 void setup(void) {  //body
@@ -139,7 +145,7 @@ void setup(void) {  //body
 
   tft.begin(identifier);
   clearScreen();
-  displayButtons();
+  goToNewState(CELLAR_DATA);
 
 
   // Texte des capteurs
@@ -169,6 +175,7 @@ void loop()  //func. definition
       log(error.f_str());
       return;
     } else {
+      goToNewState(CELLAR_DATA);
       structuredDataDisplay();
     }
   }
@@ -208,7 +215,12 @@ void loop()  //func. definition
       // Serial.println("touche");
       if (p.y < 280) {
         // Serial.println("fct4");
-        displayTerminalData(dataReceived);
+        if (dataReceived.length() == 0) {
+          displayTerminalData("Pas de donnees recues !!!");
+        } else {
+          displayTerminalData(dataReceived);
+        }
+        goToNewState(RAW_DATA);
       } else if (p.y < 490) {
         // Serial.println("fct3");
         if (errorLog.length() == 0) {
@@ -216,12 +228,15 @@ void loop()  //func. definition
         } else {
           displayTerminalData(errorLog);
         }
+        goToNewState(LOGS);
       } else if (p.y < 710) {
         // Serial.println("fct2");
         displayTerminalData("Non implemente");
+        goToNewState(HOUSE_DATA);
       } else {
         // Serial.println("fct1");
         structuredDataDisplay();
+        goToNewState(CELLAR_DATA);
       }
     }
   }
@@ -231,33 +246,85 @@ void loop()  //func. definition
 // ---------------------------------------------------------
 // Fonction d'affichage des boutons
 //----------------------------------------------------------
-void displayButtons() {
-  tft.setRotation(1);  // 0 : portrait, 1 : landscape, 2 ou 3 en continuant à tourner
-  // 4 boutons de gauche à droite
-  tft.fillRect(0, 200, 75, 35, WHITE);  // (x,y,widthx,widthy,color)
-  tft.fillRect(80, 200, 75, 35, WHITE);
-  tft.fillRect(160, 200, 75, 35, WHITE);
-  tft.fillRect(240, 200, 75, 35, WHITE);
-  // Légende des touches ----------------
-  tft.setTextSize(1);
-  tft.setTextColor(BLUE);
-  // De gauche à droite : Fct1
-  tft.setCursor(24, 212);
-  tft.println("cave");
-  // fct 2
-  tft.setTextSize(1);
-  tft.setCursor(100, 212);
-  tft.println("maison");
-  // fct3
-  tft.setTextSize(1);
-  tft.setCursor(185, 212);
-  tft.println("logs");
-  // fct 4
-  tft.setTextSize(1);
-  tft.setCursor(255, 207);
-  tft.println("donnees");
-  tft.setCursor(258, 219);
-  tft.println("brutes");
+void goToNewState(int newState) {
+  // Available states : INIT, CELLAR_DATA, HOUSE_DATA, LOGS, RAW_DATA
+
+  // Redraw only if needed : only if currentState is INIT or if newState != currenState
+  if (newState != currentState) {
+
+    // -----------------------------------------------------
+    // Redraw buttons
+    // -----------------------------------------------------
+    // We redraw only if currentState == INIT or if button == currentState or if button == newState
+    tft.setRotation(1);  // 0 : portrait, 1 : landscape, 2 ou 3 en continuant à tourner
+    tft.setTextSize(1);
+    // Button CELLAR_DATA : redraw only if changed
+    if (newState == CELLAR_DATA) {
+      tft.fillRoundRect(0, 200, 75, 35, 5, WHITE);  // (x,y,widthx,widthy,radius,color)
+      tft.setTextColor(BLACK);
+      tft.setCursor(24, 212);
+      tft.println("cave");
+    } else if (currentState == INIT || currentState == CELLAR_DATA) {
+      tft.fillRoundRect(0, 200, 75, 35, 5, BLACK);  // (x,y,widthx,widthy,radius,color)
+      tft.drawRoundRect(0, 200, 75, 35, 5, WHITE);  // (x,y,widthx,widthy,radius,color)
+      tft.setTextColor(WHITE);
+      tft.setCursor(24, 212);
+      tft.println("cave");
+    }
+
+    // Button HOUSE_DATA : redraw only if changed
+    if (newState == HOUSE_DATA) {
+      tft.fillRoundRect(80, 200, 75, 35, 5, WHITE);  // (x,y,widthx,widthy,radius,color)
+      tft.setTextColor(BLACK);
+      tft.setTextSize(1);
+      tft.setCursor(100, 212);
+      tft.println("maison");
+    } else if (currentState == INIT || currentState == HOUSE_DATA) {
+      tft.fillRoundRect(80, 200, 75, 35, 5, BLACK);  // (x,y,widthx,widthy,radius,color)
+      tft.drawRoundRect(80, 200, 75, 35, 5, WHITE);  // (x,y,widthx,widthy,radius,color)
+      tft.setTextColor(WHITE);
+      tft.setTextSize(1);
+      tft.setCursor(100, 212);
+      tft.println("maison");
+    }
+
+    // Button LOGS : redraw only if changed
+    if (newState == LOGS) {
+      tft.fillRoundRect(160, 200, 75, 35, 5, WHITE);  // (x,y,widthx,widthy,radius,color)
+      tft.setTextColor(BLACK);
+      tft.setCursor(185, 212);
+      tft.println("logs");
+    } else if (currentState == INIT || currentState == LOGS) {
+      tft.fillRoundRect(160, 200, 75, 35, 5, BLACK);
+      tft.drawRoundRect(160, 200, 75, 35, 5, WHITE);  // (x,y,widthx,widthy,radius,color)
+      tft.setTextColor(WHITE);
+      tft.setCursor(185, 212);
+      tft.println("logs");
+    }
+
+    // Button RAW_DATA : redraw only if changed
+    if (newState == RAW_DATA) {
+      tft.fillRoundRect(240, 200, 75, 35, 5, WHITE);  // (x,y,widthx,widthy,radius,color)
+      tft.setTextColor(BLACK);
+      tft.setCursor(255, 207);
+      tft.println("donnees");
+      tft.setCursor(258, 219);
+      tft.println("brutes");
+    } else if (currentState == INIT || currentState == RAW_DATA) {
+      tft.fillRoundRect(240, 200, 75, 35, 5, BLACK);
+      tft.drawRoundRect(240, 200, 75, 35, 5, WHITE);  // (x,y,widthx,widthy,radius,color)
+      tft.setTextColor(WHITE);
+      tft.setCursor(255, 207);
+      tft.println("donnees");
+      tft.setCursor(258, 219);
+      tft.println("brutes");
+    }
+
+    // -----------------------------------------------------
+    // Change the currentState
+    // -----------------------------------------------------
+    currentState = newState;
+  }
 }
 
 // ---------------------------------------------------------
@@ -338,13 +405,30 @@ void structuredDataDisplay() {
   int d_1h = dataMeasure["d_1h"];
   tft.print(d_1h);
   tft.println(" cm");
-  // Delta 1h
+  // Delta 3h
   tft.setCursor(2, 142);
   tft.println("- delta 3 h");
   tft.setCursor(200, 142);
   int d_3h = dataMeasure["d_3h"];
   tft.print(d_3h);
   tft.println(" cm");
+
+  // Delta 6h
+  tft.setCursor(2, 162);
+  tft.println("- delta 6 h");
+  tft.setCursor(200, 162);
+  int d_6h = dataMeasure["d_6h"];
+  tft.print(d_6h);
+  tft.println(" cm");
+  /*
+  // Delta 1j
+  tft.setCursor(2, 182);
+  tft.println("- delta 1 j");
+  tft.setCursor(200, 182);
+  int d_1j = dataMeasure["d_1j"];
+  tft.print(d_1j);
+  tft.println(" cm");
+  */
 }
 
 // ---------------------------------------------------------

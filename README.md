@@ -31,6 +31,24 @@ Les données transmises sont formatées en JSON de la façon suivante :
 Jeu de données pour tests : `{"nb":36665,"temp":13,"wet":80,"height":335.45,"d_30mn":-2.45,"d_1h":-30.54,"d_3h":-45.78}`
 # Module CAVE
 ## Hardware
+- carte Arduino UNO
+- carte VELLEMAN VMA 202 (RTC clock + SD card) utilisant les broches :
+	- D10 : SD card
+	- D11 : SD card
+	- D12 : SD card
+	- D13 : SD card
+	- A4 : SDA RTC clock (bus I2C)
+	- A5 : SCL RTC clock (bus I2C)
+- capteur de profondeur
+	- A3 :
+- capteur humidité et température :
+	- D6 : 
+- carte Bluetooth HC-05 :
+	- D8 : RX avec un pont résistif 1,8k/3,2k pour passer en 3.3v
+	- D9 : TX
+- Terminal Arduino :
+	- D0 : RX
+	- D1 : TX
 ## Utilisation
 ## Améliorations
 - Ajouter un horodatage aux mesures.
@@ -46,6 +64,8 @@ Jeu de données pour tests : `{"nb":36665,"temp":13,"wet":80,"height":335.45,"d_
 - Afficher une courbe de variation de hauteur,
 - Passage de l'affichage en mode veille au bout d'un certain temps,
 - Afficher température et humidité dans la maison.
+- Afficher dans les logs le nombre de mesures manquantes et la durée de fonctionnement sans coupure
+- Afficher les derniers message de log
 
 ## Version PC LINUX
 ## Version NOKIA 8110
