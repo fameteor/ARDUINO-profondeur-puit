@@ -92,6 +92,18 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 #define MAGENTA 0xF81F
 #define YELLOW 0xFFE0
 #define WHITE 0xFFFF
+// Color definitions
+#define NAVY 0x000F
+#define DARKGREEN 0x03E0
+#define DARKCYAN 0x03EF
+#define MAROON 0x7800
+#define PURPLE 0x780F
+#define OLIVE 0x7BE0
+#define LIGHTGREY 0xC618
+#define DARKGREY 0x7BEF
+#define ORANGE 0xFD20
+#define GREENYELLOW 0xAFE5
+#define PINK 0xF81F
 
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
@@ -361,72 +373,97 @@ void structuredDataDisplay() {
   tft.setRotation(1);  // 0 : portrait, 1 : landscape, 2 ou 3 en continuant à tourner
   tft.setTextSize(2);
   // Nb de mesure
-  tft.setTextColor(RED);
+  tft.setTextColor(WHITE);
   tft.setCursor(2, 2);
-  long nb = dataMeasure["nb"];
-  tft.print("Nb de mesures : ");
-  tft.println(nb);
+
+  // Affichage de la date
+  long valeur = dataMeasure["d"][2];
+  tft.print(valeur);
+  tft.print("/");
+  valeur = dataMeasure["d"][1];
+  tft.print(valeur);
+  tft.print("/");
+  valeur = dataMeasure["d"][0];
+  tft.print(valeur);
+  tft.print(" ");
+  // Affichage de l'heure
+  valeur = dataMeasure["d"][3];
+  tft.print(valeur);
+  tft.print(":");
+  valeur = dataMeasure["d"][4];
+  tft.print(valeur);
+  tft.print(":");
+  valeur = dataMeasure["d"][5];
+  tft.print(valeur);
+  tft.print(" ");
+  // Affichage du nombre de mesures
+  long n = dataMeasure["n"];
+  tft.setTextSize(1);
+  tft.print("(");
+  tft.print(n);
+  tft.println(")");
+  tft.setTextSize(2);
   // Temperature
   tft.setTextColor(YELLOW);
   tft.setCursor(2, 32);
   tft.println("Temperature");
   tft.setCursor(200, 32);
-  long temp = dataMeasure["temp"];
-  tft.print(temp);
+  long t = dataMeasure["t"];
+  tft.print(t);
   tft.println(" C");
-  // Wetness
+  // Humidity
   tft.setTextColor(GREEN);
   tft.setCursor(2, 52);
   tft.println("Humidite");
   tft.setCursor(200, 52);
-  long wet = dataMeasure["wet"];
-  tft.print(wet);
+  long h = dataMeasure["h"];
+  tft.print(h);
   tft.println(" %");
   // Water height
   tft.setTextColor(CYAN);
   tft.setCursor(2, 82);
   tft.println("Hauteur d'eau");
   tft.setCursor(200, 82);
-  int height = dataMeasure["height"];
-  tft.print(height);
+  int x = dataMeasure["x"];
+  tft.print(x);
   tft.println(" cm");
   // Delta 30mn
   tft.setTextColor(BLUE);
   tft.setCursor(2, 102);
   tft.println("- delta 30 mn");
   tft.setCursor(200, 102);
-  int d_30mn = dataMeasure["d_30mn"];
-  tft.print(d_30mn);
+  valeur = dataMeasure["v"][0];
+  tft.print(valeur);
   tft.println(" cm");
   // Delta 1h
   tft.setCursor(2, 122);
   tft.println("- delta 1 h");
   tft.setCursor(200, 122);
-  int d_1h = dataMeasure["d_1h"];
-  tft.print(d_1h);
+  valeur = dataMeasure["v"][1];
+  tft.print(valeur);
   tft.println(" cm");
   // Delta 3h
   tft.setCursor(2, 142);
   tft.println("- delta 3 h");
   tft.setCursor(200, 142);
-  int d_3h = dataMeasure["d_3h"];
-  tft.print(d_3h);
+  valeur = dataMeasure["v"][2];
+  tft.print(valeur);
   tft.println(" cm");
 
   // Delta 6h
   tft.setCursor(2, 162);
   tft.println("- delta 6 h");
   tft.setCursor(200, 162);
-  int d_6h = dataMeasure["d_6h"];
-  tft.print(d_6h);
+  valeur = dataMeasure["v"][3];
+  tft.print(valeur);
   tft.println(" cm");
   /*
   // Delta 1j
   tft.setCursor(2, 182);
   tft.println("- delta 1 j");
   tft.setCursor(200, 182);
-  int d_1j = dataMeasure["d_1j"];
-  tft.print(d_1j);
+  int d1j = dataMeasure["d1j"];
+  tft.print(d1j);
   tft.println(" cm");
   */
 }

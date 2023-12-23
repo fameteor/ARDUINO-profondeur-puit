@@ -19,16 +19,28 @@ Un second appareil (appelé "module AFFICHAGE") permet d'afficher ces données. 
 Les données transmises sont formatées en JSON de la façon suivante :
 ```
 {
-  "nb": 36665,		// number of measure
-  "temp": 13,		// temperature
-  "wet": 80,		// humidity
-  "height": 335.45,	// water height (cm)
-  "d_30mn": -2.45,	// delta water height during 30 minutes (cm)
-  "d_1h": -30.54,	// delta water height during 1 hour (cm)
-  "d_3h": -45.78	// delta water height during 3 hours (cm)
+    "n": 525600, // Nombre de mesures
+    "d": [	// d comme "D"ate
+        2023,	// index 0 : année
+        12,	// index 1 : mois
+        25,	// index 2 : jour
+        12,	// index 3 : heures
+        45,	// index 4 : minutes
+        13	// index 5 : secondes
+    ],
+    "t": 30,	// t comme "T"empérature
+    "h": 66,	// h comme "H"umidité
+    "x": 334,	// x pour la hauteur d'eau
+    "v": [	// v comme "V"ariation
+        -1,	// index 0 : delta 30mn
+        -2,	// index 0 : delta 1h
+        -3,	// index 0 : delta 3h
+        -4	// index 0 : delta 6h
+    ]
 }
 ```
-Jeu de données pour tests : `{"nb":36665,"temp":13,"wet":80,"height":335.45,"d_30mn":-2.45,"d_1h":-30.54,"d_3h":-45.78}`
+Jeu de données pour tests : `{"n":525600,"A":2023,"M":12,"J":25,"H":12,"M":45,"S":13,"t":30,"x":334,"h":66,"d30mn":-1,"d1h":-2,"d3h":-3,"d6h":-4}`
+Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":334,"h":66,"v":[-1,-2,-3,-4]}`
 # Module CAVE
 ## Hardware
 - carte Arduino UNO
