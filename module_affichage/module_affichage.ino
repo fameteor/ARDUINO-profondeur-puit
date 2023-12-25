@@ -378,23 +378,23 @@ void structuredDataDisplay() {
 
   // Affichage de la date
   long valeur = dataMeasure["d"][2];
-  tft.print(valeur);
+  tft.print(twoDigits(valeur));
   tft.print("/");
   valeur = dataMeasure["d"][1];
-  tft.print(valeur);
+  tft.print(twoDigits(valeur));
   tft.print("/");
   valeur = dataMeasure["d"][0];
-  tft.print(valeur);
+  tft.print(twoDigits(valeur));
   tft.print(" ");
   // Affichage de l'heure
   valeur = dataMeasure["d"][3];
-  tft.print(valeur);
+  tft.print(twoDigits(valeur));
   tft.print(":");
   valeur = dataMeasure["d"][4];
-  tft.print(valeur);
+  tft.print(twoDigits(valeur));
   tft.print(":");
   valeur = dataMeasure["d"][5];
-  tft.print(valeur);
+  tft.print(twoDigits(valeur));
   tft.print(" ");
   // Affichage du nombre de mesures
   long n = dataMeasure["n"];
@@ -473,4 +473,12 @@ void structuredDataDisplay() {
 //----------------------------------------------------------
 void log(String text) {
   errorLog = errorLog + text + "\n";
+}
+
+// ---------------------------------------------------------
+// Logging
+//----------------------------------------------------------
+String twoDigits(long value) {
+  if (value >= 10) return String(value);
+  else return "0" + String(value);
 }

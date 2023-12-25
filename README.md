@@ -19,7 +19,7 @@ Un second appareil (appelé "module AFFICHAGE") permet d'afficher ces données. 
 Les données transmises sont formatées en JSON de la façon suivante :
 ```
 {
-    "n": 525600, // Nombre de mesures
+    "n": 52, 	// Nombre de mesures
     "d": [	// d comme "D"ate
         2023,	// index 0 : année
         12,	// index 1 : mois
@@ -39,7 +39,6 @@ Les données transmises sont formatées en JSON de la façon suivante :
     ]
 }
 ```
-Jeu de données pour tests : `{"n":525600,"A":2023,"M":12,"J":25,"H":12,"M":45,"S":13,"t":30,"x":334,"h":66,"d30mn":-1,"d1h":-2,"d3h":-3,"d6h":-4}`
 Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":334,"h":66,"v":[-1,-2,-3,-4]}`
 # Module CAVE
 ## Hardware
@@ -52,9 +51,9 @@ Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":3
 	- A4 : SDA RTC clock (bus I2C)
 	- A5 : SCL RTC clock (bus I2C)
 - capteur de profondeur
-	- A3 :
+	- A3
 - capteur humidité et température :
-	- D6 : 
+	- D7
 - carte Bluetooth HC-05 :
 	- D8 : RX avec un pont résistif 1,8k/3,2k pour passer en 3.3v
 	- D9 : TX
