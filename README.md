@@ -78,8 +78,8 @@ Une alimentation 12V DC est nécessaire pour le capteur de profondeur. La prise 
 		- D0
 		- D1
 - carte Bluetooth HC-05 :
-	- D0
-	- D1
+	- D0-RX : vers HC-05 RX avec un pont résistif 1,8k/3,3k vers la masse pour passer en 3.3v
+	- D1-TX : vers HC-05 TX
 ## Utilisation
 - configurer le module HC-05 en slave (cf $ configuration HC-05)
 ## Améliorations
@@ -94,18 +94,20 @@ Une alimentation 12V DC est nécessaire pour le capteur de profondeur. La prise 
 
 # Configuration HC-05
 
+> Nb : compte tenu du fait que la carte Bluetooth utilise le port série standard de l'arduino, elle ne doit pas être branchée lorqu'on télécharge le code sur l'Arduino !  
+
 - Charger sur un Arduino UNO le soft par défaut de l'IHM Arduino (config qui ne fait rien),
 - Connecter le HD-05 à l'Arduino :
 	- D0-RX : vers HC-05 RX avec un pont résistif 1,8k/3,3k vers la masse pour passer en 3.3v
 	- D1-TX : vers HC-05 TX
-- Passer en mode terminal en `38400` bps avec `both NL & CR`. On peut alors taper la commande `AT` envoyée au HC-05 qui répond par ÒK`.
+- Passer en mode terminal en `38400` bps avec `both NL & CR`. On peut alors taper la commande `AT` envoyée au HC-05 qui répond par `ÒK`.
 
 ## Configurer le slave (module AFFICHAGE) :
 - réinitialiser les paramètres par défaut : `AT+ORGL`
 - effacer les appareils apairés : `AT+RMAAD`
 - configurer le mot de passe : `AT+PSWD=9362`
 - assigner le mode esclave : `AT+ROLE=0`
-- modifier le nom : `AT+NAME=CAVE_FB`
+- modifier le nom : `AT+NAME=CAVE_FB SLAVE`
 - récupérer et noter l'adresse du module: `AT+ADDR?` : `98d3:11:fd232c`
 
 ## Configurer le master (module CAVE) :
