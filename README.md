@@ -6,13 +6,14 @@ Cet appareil se compose d'une carte Arduino UNO (appelée "module CAVE" ) placé
 	- la température,
 	- l'humidité
 - calculer des alarmes orange et rouge pour prévenir d'un débordement dû à la montée de la nappe phréatique,
-- transmettre en Bluetooth ces éléments sous format JSON.
+- transmettre en Bluetooth ces éléments sous format JSON,
+- stoquer ces éléments sur une carte SD.
 
 Un second appareil (appelé "module AFFICHAGE") permet d'afficher ces données. cet appareil peut-être :
 - une carte Arduino,
 - un PC sous LINUX,
 - un téléphone Nokia,
-- un téléphone Android 
+- un téléphone Android.
 
     
 # Structure JSON transmise
@@ -55,23 +56,35 @@ Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":3
 - capteur humidité et température :
 	- D7
 - carte Bluetooth HC-05 :
-	- D8 : RX avec un pont résistif 1,8k/3,2k pour passer en 3.3v
-	- D9 : TX
+	- D8 : vers HC-05 RX avec un pont résistif 1,8k/3,2k vers la masse pour passer en 3.3v
+	- D9 : vers HC-05 TX
 - Terminal Arduino :
 	- D0 : RX
 	- D1 : TX
+	
+Une alimentation 12V DC est nécessaire pour le capteur de profondeur. La prise Arduino a les specs suivantes : 5.5mm diameter cylindrical plug with 2.1mm pin hole, and that provides Positive voltage on the inside pin hole and Negative (or common/ground) voltage on the outside cylindrical sleeve of the connector plug.
 ## Utilisation
+- configurer le module HC-05 en master (cf $ configuration HC-05)
 ## Améliorations
-- Ajouter un horodatage aux mesures.
 
 # Module AFFICHAGE
 ## Version Arduino
 ### Hardware
+> Nb : compte tenu du fait que la carte Bluetooth utilise le port série standard de l'arduino, elle ne doit pas être branchée lorqu'on télécharge le code sur l'Arduino ! 
+
+- carte Arduino UNO
+- carte affichage touchscreen TFT028 de 2,8 pouces de diamètre
+	- utilise toutes les E/S sauf :
+		- A?
+		- D0
+		- D1
+- carte Bluetooth HC-05 :
+	- D0
+	- D1
 ### Utilisation
+- configurer le module HC-05 en slave (cf $ configuration HC-05)
 ### Améliorations
 - Afficher les caractères accentués (https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts),
-- Afficher les touches de fonctions du menu en cours en grisé, 
-- Stoquer les données dans la carte SIM,
 - Afficher une courbe de variation de hauteur,
 - Passage de l'affichage en mode veille au bout d'un certain temps,
 - Afficher température et humidité dans la maison.
@@ -83,9 +96,31 @@ Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":3
 ## Version Android
 -----------------------------------------------------------------------------
 
+# Configuration HC-05
+
+- démarrer avec le switch en mode configuration, toutes les leds (verte, orange et rouge) sont allumée, on peut alors rentrer les commandes suivantes dans la console terminal, après avoir change la config du terminal pour `both NL & CR`:
+
+Configurer le slave (module AFFICHAGE) :
+- réinitialiser les paramètres par défaut : `AT+ORGL`
+- effacer les appareils apairés : `AT+RMAAD`
+- configurer le mot de passe : `AT+PSWD=9362`
+- assigner le mode esclave : `AT+ROLE=0`
+- modifier le nom : `AT+NAME=CAVE_FB`
+- récupérer et noter l'adresse du module: `AT+ADDR?` : `98d3:11:fd232c`
+
+Configurer le master (module CAVE) :
+- réinitialiser les paramètres par défaut : `AT+ORGL`
+- effacer les appareils apairés : `AT+RMAAD`
+- configurer le mot de passe : `AT+PSWD=9362`
+- assigner le mode esclave : `AT+ROLE=1`
+- modifier le nom : `AT+NAME=CAVE_FB MASTER`
+- mettre en connexion vers adresse unique : `AT+CMODE=0`
+- donner l'adresse du module distant : `AT+BIND=98d3,11,fd232c`
+	
+
 ### V00
   #### Hardware :
-    Arduino power plug from 7 to 12V (Volts) of DC (Direct Current) : 5.5mm diameter cylindrical plug with 2.1mm pin hole, and that provides Positive voltage on the inside pin hole and Negative (or common/ground) voltage on the outside cylindrical sleeve of the connector plug.
+    
   #### partie CAVE
     ##### logiciel CAVE_01
     Il effectue les tâches suivantes
@@ -114,13 +149,7 @@ Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":3
   - carte SD
   
 #### Fonctionnement
-- démarrer avec le switch en mode configuration, toutes les leds (verte, orange et rouge) sont allumée, on peut alors rentrer les commandes suivantes dans la console terminal, après avoir change la config du terminal pour `both NL & CR`:
-	- réinitialiser les paramètres par défaut : `AT+ORGL`
-	- effacer les appareils apairés : `AT+RMAAD`
-	- configurer le mot de passe : `AT+PSWD=9362`
-	- assigner le mode esclave : `AT+ROLE=0`
-	- modifier le nom : `AT+NAME=CAVE_FB`
-	- récupérer et noter l'adresse du module: `AT+ADDR?` : 98d3:11:fd232c
+
 	
 - arrêter et redémarrer avec le switch en mode normal. Une mesure est effectuée toutes les secondes et affichée sur la console. Les deltas de 30mn, 1h, 3h, 6h, 1j, 7j, 14j, 1m, 3m, 6m, 1 an sont aussi affichés sur la console. Les LEDs ont alors un rôle d'alarme :
 	- LED verte : le niveau est stable ou baisse
@@ -131,16 +160,7 @@ Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":3
 UNO a un ADC de 10 bits seulement => précision de 0,48 cm. c'est suffisant. Mais Pour des convertisseurs 12 bits, on peut utiliser les arduino suivants : The Zero, Due, MKR family and Nano 33 (BLE and IoT) boards have 12-bit ADC capabilities that can be accessed by changing the resolution to 12.
 
 
-## Logiciel CAVE_02
-Correspond à l'afficheur Arduino des données transmises par la cave.
-La configuration du module HC05 est alors la suivante :
-- réinitialiser les paramètres par défaut : `AT+ORGL`
-- effacer les appareils apairés : `AT+RMAAD`
-- configurer le mot de passe : `AT+PSWD=9362`
-- assigner le mode esclave : `AT+ROLE=1`
-- modifier le nom : `AT+NAME=CAVE_FB MASTER`
-- mettre en connexion vers adresse unique : `AT+CMODE=0`
-- donner l'adresse du module distant : `AT+BIND=98d3,11,fd232c`
+
 
 ## B1) Connexion avec un PC Ubuntu avec Bluetooth
 Cf : `http://www.userk.co.uk/arduino-bluetooth-linux/`
