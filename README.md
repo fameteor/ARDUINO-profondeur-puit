@@ -56,7 +56,7 @@ Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":3
 - capteur humidité et température :
 	- D7
 - carte Bluetooth HC-05 :
-	- D8 : vers HC-05 RX avec un pont résistif 1,8k/3,2k vers la masse pour passer en 3.3v
+	- D8 : vers HC-05 RX avec un pont résistif 1,8k/3,3k vers la masse pour passer en 3.3v
 	- D9 : vers HC-05 TX
 - Terminal Arduino :
 	- D0 : RX
@@ -66,10 +66,9 @@ Une alimentation 12V DC est nécessaire pour le capteur de profondeur. La prise 
 ## Utilisation
 - configurer le module HC-05 en master (cf $ configuration HC-05)
 ## Améliorations
-
-# Module AFFICHAGE
-## Version Arduino
-### Hardware
+- l'Arduino UNO à un ADC de 10 bits seulement. Pour une plage de mesure de 1v à 4v (0 à 5m de profondeur) avec 10 bits de 0 à 5V, cela donne une précision de 0,8 cm environ. Envisager de passer en ADC 12 bits ?
+# Module AFFICHAGE version Arduino
+## Hardware
 > Nb : compte tenu du fait que la carte Bluetooth utilise le port série standard de l'arduino, elle ne doit pas être branchée lorqu'on télécharge le code sur l'Arduino ! 
 
 - carte Arduino UNO
@@ -81,9 +80,9 @@ Une alimentation 12V DC est nécessaire pour le capteur de profondeur. La prise 
 - carte Bluetooth HC-05 :
 	- D0
 	- D1
-### Utilisation
+## Utilisation
 - configurer le module HC-05 en slave (cf $ configuration HC-05)
-### Améliorations
+## Améliorations
 - Afficher les caractères accentués (https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts),
 - Afficher une courbe de variation de hauteur,
 - Passage de l'affichage en mode veille au bout d'un certain temps,
@@ -91,16 +90,17 @@ Une alimentation 12V DC est nécessaire pour le capteur de profondeur. La prise 
 - Afficher dans les logs le nombre de mesures manquantes et la durée de fonctionnement sans coupure
 - Afficher les derniers message de log
 
-## Version PC LINUX
-## Version NOKIA 8110
-## Version Android
 -----------------------------------------------------------------------------
 
 # Configuration HC-05
 
-- démarrer avec le switch en mode configuration, toutes les leds (verte, orange et rouge) sont allumée, on peut alors rentrer les commandes suivantes dans la console terminal, après avoir change la config du terminal pour `both NL & CR`:
+- Charger sur un Arduino UNO le soft par défaut de l'IHM Arduino (config qui ne fait rien),
+- Connecter le HD-05 à l'Arduino :
+	- D0-RX : vers HC-05 RX avec un pont résistif 1,8k/3,3k vers la masse pour passer en 3.3v
+	- D1-TX : vers HC-05 TX
+- Passer en mode terminal en `38400` bps avec `both NL & CR`. On peut alors taper la commande `AT` envoyée au HC-05 qui répond par ÒK`.
 
-Configurer le slave (module AFFICHAGE) :
+## Configurer le slave (module AFFICHAGE) :
 - réinitialiser les paramètres par défaut : `AT+ORGL`
 - effacer les appareils apairés : `AT+RMAAD`
 - configurer le mot de passe : `AT+PSWD=9362`
@@ -108,7 +108,7 @@ Configurer le slave (module AFFICHAGE) :
 - modifier le nom : `AT+NAME=CAVE_FB`
 - récupérer et noter l'adresse du module: `AT+ADDR?` : `98d3:11:fd232c`
 
-Configurer le master (module CAVE) :
+## Configurer le master (module CAVE) :
 - réinitialiser les paramètres par défaut : `AT+ORGL`
 - effacer les appareils apairés : `AT+RMAAD`
 - configurer le mot de passe : `AT+PSWD=9362`
@@ -117,50 +117,12 @@ Configurer le master (module CAVE) :
 - mettre en connexion vers adresse unique : `AT+CMODE=0`
 - donner l'adresse du module distant : `AT+BIND=98d3,11,fd232c`
 	
-
-### V00
-  #### Hardware :
-    
-  #### partie CAVE
-    ##### logiciel CAVE_01
-    Il effectue les tâches suivantes
-    - mesure toute les minutes de la profondeur
-    - mémoire des mesures : 1 semaine, 24h, 12h, 6h, 3h, 1h, 30mn,
-    - calcul des variations : 1 semaine, 24h, 12h, 6h, 3h, 1h, 30mn.
-    - affichage de LEDS :
-      - vert : pas d'augmentation de la hauteur de la nappe,
-      - orange : risque de débordement sous 1 semaine,
-      - rouge ; risque de débordement sous 24h?
-    - envoie des données en Bluetooth
-    - impression des données sur la console série
-    ##### câblage
-    - capteur de profondeur : A2
-    - bluetooth :
-    - LEDs : 
-  #### partie AFFICHAGE
-##### logiciel CAVE_01
-##### câblage
+-----------------------------------------------------------------------------
 
 
-  - capteur de profondeur : A2
-  - bluetooth :
-  - afficheur :
-  - horloge
-  - carte SD
-  
-#### Fonctionnement
-
-	
-- arrêter et redémarrer avec le switch en mode normal. Une mesure est effectuée toutes les secondes et affichée sur la console. Les deltas de 30mn, 1h, 3h, 6h, 1j, 7j, 14j, 1m, 3m, 6m, 1 an sont aussi affichés sur la console. Les LEDs ont alors un rôle d'alarme :
-	- LED verte : le niveau est stable ou baisse
-	- LED orange : risque de débordement sous 1 semaine
-	- LED rouge : risque de débordement sous 1 jour
-
-##### Problème
-UNO a un ADC de 10 bits seulement => précision de 0,48 cm. c'est suffisant. Mais Pour des convertisseurs 12 bits, on peut utiliser les arduino suivants : The Zero, Due, MKR family and Nano 33 (BLE and IoT) boards have 12-bit ADC capabilities that can be accessed by changing the resolution to 12.
-
-
-
+## Afficheur version PC LINUX
+## Afficheur version NOKIA 8110
+## Afficheur version Android
 
 ## B1) Connexion avec un PC Ubuntu avec Bluetooth
 Cf : `http://www.userk.co.uk/arduino-bluetooth-linux/`
