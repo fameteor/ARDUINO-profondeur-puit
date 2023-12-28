@@ -179,16 +179,21 @@ void loop()  //func. definition
     //displayTerminalData(Serial.readString());
     dataReceived = Serial.readString();
     dataReceived.trim();
-    // JSON to structure
-    DeserializationError error = deserializeJson(dataMeasure, dataReceived);
-
-    // Test if parsing succeeds.
-    if (error) {
-      log(error.f_str());
-      return;
-    } else {
-      goToNewState(CELLAR_DATA);
-      structuredDataDisplay();
+    // Check if data fully received
+    if (dataReceived.startsWith("{") && dataReceived.endsWith("}")) {
+      // JSON to structure
+      DeserializationError error = deserializeJson(dataMeasure, dataReceived);
+      // Test if parsing succeeds.
+      if (error) {
+        log(error.f_str());
+        return;
+      } else {
+        goToNewState(CELLAR_DATA);
+        structuredDataDisplay();
+      }
+    }
+    else {
+      log("Data part received");
     }
   }
 
@@ -472,7 +477,7 @@ void structuredDataDisplay() {
 // Logging
 //----------------------------------------------------------
 void log(String text) {
-  errorLog = errorLog + text + "\n";
+  errorLog = text + "\n";
 }
 
 // ---------------------------------------------------------

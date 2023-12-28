@@ -102,7 +102,7 @@ Une alimentation 12V DC est nécessaire pour le capteur de profondeur. La prise 
 	- D1-TX : vers HC-05 TX
 - Passer en mode terminal en `38400` bps avec `both NL & CR`. On peut alors taper la commande `AT` envoyée au HC-05 qui répond par `ÒK`.
 
-## Configurer le slave (module AFFICHAGE) :
+## Configurer le slave (module CAVE) :
 - réinitialiser les paramètres par défaut : `AT+ORGL`
 - effacer les appareils apairés : `AT+RMAAD`
 - configurer le mot de passe : `AT+PSWD=9362`
@@ -110,7 +110,7 @@ Une alimentation 12V DC est nécessaire pour le capteur de profondeur. La prise 
 - modifier le nom : `AT+NAME=CAVE_FB SLAVE`
 - récupérer et noter l'adresse du module: `AT+ADDR?` : `98d3:11:fd232c`
 
-## Configurer le master (module CAVE) :
+## Configurer le master (module AFFICHAGE) :
 - réinitialiser les paramètres par défaut : `AT+ORGL`
 - effacer les appareils apairés : `AT+RMAAD`
 - configurer le mot de passe : `AT+PSWD=9362`
