@@ -1,0 +1,31 @@
+<head>
+  <title>module_meteor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+Suivi de la cave
+
+{{> lastValue}}
+
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+
+</body>
+
+
+
+
+<template name="lastValue">
+	{{# with essai}}
+	<p class="mesure">Mesure {{n}} le {{date}} à {{heure}}</p>
+	<p class="temperature">Température : {{t}} °C </p>
+	<p class="humidite">Humidité : {{h}} % </p>
+	<p class="hauteur">Hauteur d'eau : {{x}} cm </p>
+	{{/with}}
+</template>
+
+
+

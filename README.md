@@ -17,7 +17,7 @@ Un second appareil (appelé "module AFFICHAGE") permet d'afficher ces données. 
 
     
 # Structure JSON transmise
-Les données transmises sont formatées en JSON de la façon suivante :
+Les données transmises par le module CAVE sont formatées en JSON de la façon suivante :
 ```
 {
     "n": 52, 	// Nombre de mesures
@@ -29,10 +29,10 @@ Les données transmises sont formatées en JSON de la façon suivante :
         45,	// index 4 : minutes
         13	// index 5 : secondes
     ],
-    "t": 30,	// t comme "T"empérature
-    "h": 66,	// h comme "H"umidité
-    "x": 334,	// x pour la hauteur d'eau
-    "v": [	// v comme "V"ariation
+    "t": 30,	// t comme "T"empérature en °C
+    "h": 66,	// h comme "H"umidité relative en %
+    "x": 334,	// x pour la hauteur d'eau en cm
+    "v": [	// v comme "V"ariation de hauteur en cm
         -1,	// index 0 : delta 30mn
         -2,	// index 0 : delta 1h
         -3,	// index 0 : delta 3h
@@ -40,7 +40,7 @@ Les données transmises sont formatées en JSON de la façon suivante :
     ]
 }
 ```
-Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":334,"h":66,"v":[-1,-2,-3,-4]}`
+Jeu de données pour tests : `{"n":525600,"d":[2023,12,25,12,45,13],"t":30,"x":334,"h":66,"v":[-111,-222,-333,-444]}`
 # Module CAVE
 ## Hardware
 - carte Arduino UNO
@@ -73,8 +73,8 @@ Une alimentation 12V DC est nécessaire pour le capteur de profondeur. La prise 
 
 - carte Arduino UNO
 - carte affichage touchscreen TFT028 de 2,8 pouces de diamètre
-	- utilise toutes les E/S sauf :
-		- A?
+	- utilise toutes les E/S **sauf** :
+		- A5
 		- D0
 		- D1
 - carte Bluetooth HC-05 :
@@ -135,20 +135,27 @@ Avec UBUNTU, la stack de gestion Bluetooth est déjà installée `bluez`. Il res
 
 ### Utilisation
 - 1) Connecter le device Bluetooth
-	- utiliser `bluetoothctl`
+	- en utiliser `bluetoothctl`, vérifier et appairer le device
 	- `scan on`
 	- `agent on`
 	- `pair 98:D3:11:FD:23:2C` en fournissant éventuellement le PIN code
-	- `connect 98:D3:11:FD:23:2C`
 - 2) Y attacher le device série `rfcommm0`
 	- `sudo killall rfcomm`
 	- `sudo rfcomm connect /dev/rfcomm0 98:D3:11:FD:23:2C 1 &`
 - 3) Lancer le terminal sur le device série connecté sur `/dev/rfcomm0` (config appelée `bluetooth`) : `sudo minicom bluetooth`
 
 Nb :
-- pour supprimer avec bluetoothctl (si PIN code pas demandé) :  disconnect, untrust, and remove the device by bluetooth MAC address.
+- pour supprimer avec bluetoothctl (si PIN code pas demandé) :  `disconnect`, `untrust`, and `remove` the device by bluetooth MAC address.
 - pour obtenir des informations sur l'état du device : `bluetoothctl info 98:D3:11:FD:23:2C`, à noter `UUID: Serial Port `.
 - pour voir les ports RFCOMM utilisés : `rfcomm -a`
+- pour voir si le `serial port profile` Bluetooth existe : `sudo sdptool browse local`
+- si non, vérifier la config : `sudo nano /etc/systemd/system/dbus-org.bluez.service`, il doit y avoir les deux lignes :
+```
+ExecStart=/usr/lib/bluetooth/bluetoothd -C
+ExecStartPost=/usr/bin/sdptool add SP
+
+```
+et non seulement : `ExecStart=/usr/lib/bluetooth/bluetoothd`
 
 ## B2) Connexion avec un Nokia 8118 en Bluetooth
 
@@ -200,3 +207,31 @@ Ce qui nous intéresse semble le `Serial Port Bluetooth Profile (SPP)`
     - https://www.baeldung.com/linux/bluetooth-via-terminal
     - send data via Bluetooth : http://www.userk.co.uk/arduino-bluetooth-linux/
     - another solution : https://avilpage.com/2017/10/bluetooth-communication-between-ubuntu-android.html
+    
+# Module NODE
+> Attention : fonctionne avec Node version 16 ! Utiliser : `nvm use 16`
+
+- pour démarrer :
+	- connecter le Bluetooth : si déjà appairé et bluetoothctl on :  `rfcomm connect /dev/rfcomm0 98:D3:11:FD:23:2C 1 &`
+	- lancer `node index.js`
+- pour arrêter :
+	- sortir de node : CTRL C,
+	- sortir de la connexion rfcomm : CTRL C
+	- couper la liaison Bluetooth : `bluetoothctl disconnect 98:D3:11:FD:23:2C`
+
+En cas de problèmes :
+- En cas d'erreur `Error: Permission denied, cannot open /dev/rfcomm0`, pour accéder au port rfcomm0 depuis node : `sudo chmod a+rw /dev/rfcomm0`
+- Pour lancer `rfcomm` sans `sudo` : `sudo chmod u+s /usr/bin/rfcomm`
+
+# Module Meteor
+
+> Version : pour Node.js version `14`, la dernière version compatible est : `serialport@11`.
+
+Intallation :
+- `meteor npm install serialport@11`
+
+
+    
+# Documentation
+- Bluetooth
+	- introdution to Bluetooth programming : https://people.csail.mit.edu/albert/bluez-intro/

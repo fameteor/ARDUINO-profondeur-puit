@@ -1,0 +1,14 @@
+{
+  "name": "module_node",
+  "version": "1.0.0",
+  "description": "Module communicating with module CAVE",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serialport": "^12.0.0"
+  }
+}
