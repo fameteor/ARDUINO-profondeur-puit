@@ -208,7 +208,7 @@ Ce qui nous intéresse semble le `Serial Port Bluetooth Profile (SPP)`
     - send data via Bluetooth : http://www.userk.co.uk/arduino-bluetooth-linux/
     - another solution : https://avilpage.com/2017/10/bluetooth-communication-between-ubuntu-android.html
     
-# Module NODE
+# Module AFFICHAGE NODE
 > Attention : fonctionne avec Node version 16 ! Utiliser : `nvm use 16`
 
 - pour démarrer :
@@ -223,13 +223,20 @@ En cas de problèmes :
 - En cas d'erreur `Error: Permission denied, cannot open /dev/rfcomm0`, pour accéder au port rfcomm0 depuis node : `sudo chmod a+rw /dev/rfcomm0`
 - Pour lancer `rfcomm` sans `sudo` : `sudo chmod u+s /usr/bin/rfcomm`
 
-# Module Meteor
+# Module AFFICHAGE Meteor
 
-> Version : pour Node.js version `14`, la dernière version compatible est : `serialport@11`.
+> Attention : fonctionne avec Node version 14 ! Utiliser : `nvm use 14`
+> Pour Node.js version `14`, la dernière version compatible est : `serialport@11`.
 
-Intallation :
+## Installation :
 - `meteor npm install serialport@11`
 
+## Utilisation
+- Si le HC-05 est déjà appairé, lancer `rfcomm connect /dev/rfcomm0 98:D3:11:FD:23:2C 1 &`, sinon voir le paragraphe utilisation de 'bluetoothctl'.
+- Dans la directory Meteor, `sudo chmod a+rw /dev/rfcomm0` puis `meteor`
+
+## Amélioration
+- Ajouter un bouton de synchronisation de l'heure du PC vers l'Arduino
 
     
 # Documentation

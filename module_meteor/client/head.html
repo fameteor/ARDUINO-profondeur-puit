@@ -1,6 +1,8 @@
 <head>
   <title>module_meteor</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/src/d3.v4.js" charset="utf-8"></script>
+  <link href="/src/metricsgraphics.css" rel="stylesheet" type="text/css">
+  <script src="/src/metricsgraphics.min.js"></script>
 </head>
 
 <body>
@@ -9,8 +11,7 @@ Suivi de la cave
 
 {{> lastValue}}
 
-<div>
-  <canvas id="myChart"></canvas>
+<div id="chart">
 </div>
 
 </body>
@@ -24,7 +25,9 @@ Suivi de la cave
 	<p class="temperature">Température : {{t}} °C </p>
 	<p class="humidite">Humidité : {{h}} % </p>
 	<p class="hauteur">Hauteur d'eau : {{x}} cm </p>
+	{{draw}}
 	{{/with}}
+	
 </template>
 
 

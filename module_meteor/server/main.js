@@ -12,6 +12,10 @@ port.on('readable', function () {
 bound(function() {
   try {
 	  var data = JSON.parse(port.read().toString());
+	  // We add a date stamp
+	  const mesureDate = new Date(data.d[0], data.d[1] - 1, data.d[2],data.d[3],data.d[4], data.d[5]);
+	  console.log(mesureDate);
+	  data.date = mesureDate;
 	  console.log(CellarMeasures.insert(data));
 	  
 	  console.log("Mesure " + data.n + " du " + data.d[2] + "/" + data.d[1] + "/" + data.d[0] + " à "  + data.d[3] + ":" + data.d[4] + ":" + data.d[5]);
