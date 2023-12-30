@@ -227,12 +227,14 @@ En cas de problèmes :
 
 > Attention : fonctionne avec Node version 14 ! Utiliser : `nvm use 14`
 > Pour Node.js version `14`, la dernière version compatible est : `serialport@11`.
+- Le serveur enregistre les données renvoyées par le module CAVE vers la BD Mongo en y rajoutant une propriété `date` de type `::Date` Javacript.
+- le client affiche la dernière mesure et la courbe de toutes les mesures de la base (zoomable temporellement).
 
 ## Installation :
 - `meteor npm install serialport@11`
 
 ## Utilisation
-- Si le HC-05 est déjà appairé, lancer `rfcomm connect /dev/rfcomm0 98:D3:11:FD:23:2C 1 &`, sinon voir le paragraphe utilisation de 'bluetoothctl'.
+- Si le HC-05 est déjà appairé, lancer `rfcomm connect /dev/rfcomm0 98:D3:11:FD:23:2C 1 &`, sinon voir le paragraphe utilisation de `bluetoothctl`.
 - Dans la directory Meteor, `sudo chmod a+rw /dev/rfcomm0` puis `meteor`
 
 ## Amélioration
