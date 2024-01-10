@@ -4,7 +4,32 @@
 const CellarMeasures  = new Mongo.Collection('cellarMeasures')
 
 
-// Get measures in the database -------------------------------------
+// Get the cave.txt data --------------------------------------------
+try {
+	const sdData = Assets.getText('CAVE.TXT');
+	const sdDateLines = sdData.split('\n');
+	console.log("Loading CAVE.TXT data -------------------------------- ");
+	console.log("nb de lignes : " + sdDateLines.length);
+	sdDateLines.forEach(function(line) {
+		try {
+		  var data = JSON.parse(line);
+		  // We add a date stamp
+		  const mesureDate = new Date(data.d[0], data.d[1] - 1, data.d[2],data.d[3],data.d[4], data.d[5]);
+		  data.date = mesureDate;
+		  CellarMeasures.insert(data);	
+	 	} catch (e) {
+	  		// No JSON data on this line
+	  		console.log("power " + line);
+		}
+
+	});
+	console.log("Loading done ---------------------------------------- ");
+} catch (e) {
+	console.log("no CAVE.TXT file ");
+}
+
+
+// Put measures in the database -------------------------------------
 const { SerialPort } = require('serialport')
 const port =  new SerialPort({path: '/dev/rfcomm0', baudRate: 56000});
 const bound = Meteor.bindEnvironment((callback) => {callback()})
